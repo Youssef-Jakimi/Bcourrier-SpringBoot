@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profil – Admin BC</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body class="flex h-screen bg-blue-50 font-poppins">
+
+  <!-- Sidebar -->
+  <aside class="flex flex-col w-72 bg-gradient-to-b from-sky-900 to-sky-700 text-sky-100 p-6">
+    <div class="flex justify-center mb-6">
+      <img src="https://cod.sante.gov.ma/images/mus.png" alt="Ministère de la Santé" class="h-12 rounded"/>
+
+    </div>
+    <div class="mb-6">
+      <input type="text" placeholder="Recherche..."
+             class="w-full px-4 py-2 rounded-lg bg-[#01659F] placeholder-[#B3D7F2] focus:outline-none transition"/>
+    </div>
+    <nav class="flex-1 space-y-2">
+        <a href="dashboard.html" class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
+            <i data-feather="home" class="w-5 h-5 mr-3"></i><span>Dashboard</span>
+          </a>
+      <button id="menu-enregistrer"
+              class="w-full flex items-center justify-between px-4 py-2 rounded-lg hover:bg-[#01659F] transition">
+        <div class="flex items-center">
+          <i data-feather="file-plus" class="w-5 h-5 mr-3"></i>
+          <span>Enregistrer Courrier</span>
+        </div>
+        <i data-feather="chevron-down" class="w-4 h-4 transition-transform"></i>
+      </button>
+      <div id="submenu-enregistrer" class="ml-6 mt-1 space-y-1 hidden">
+        <a href="enregistrer-arrivee.html"
+           class="flex items-center px-3 py-1 rounded-lg hover:bg-[#01659F] transition">
+          <i data-feather="arrow-down-circle" class="w-4 h-4 mr-2"></i><span>Arrivée</span>
+        </a>
+        <a href="enregistrer-depart.html"
+           class="flex items-center px-3 py-1 rounded-lg hover:bg-[#01659F] transition">
+          <i data-feather="arrow-up-circle" class="w-4 h-4 mr-2"></i><span>Départ</span>
+        </a>
+      </div>
+
+      <button id="menu-consulter"
+              class="w-full flex items-center justify-between px-4 py-2 rounded-lg hover:bg-[#01659F] transition">
+        <div class="flex items-center">
+          <i data-feather="folder" class="w-5 h-5 mr-3"></i>
+          <span>Consulter Courrier</span>
+        </div>
+        <i data-feather="chevron-down" class="w-4 h-4 transition-transform"></i>
+      </button>
+      <div id="submenu-consulter" class="ml-6 mt-1 space-y-1 hidden">
+        <a href="consulter-arrivee.html"
+           class="flex items-center px-3 py-1 rounded-lg hover:bg-[#01659F] transition">
+          <i data-feather="arrow-down-circle" class="w-4 h-4 mr-2"></i><span>Arrivée</span>
+        </a>
+        <a href="consulter-depart.html"
+           class="flex items-center px-3 py-1 rounded-lg hover:bg-[#01659F] transition">
+          <i data-feather="arrow-up-circle" class="w-4 h-4 mr-2"></i><span>Départ</span>
+        </a>
+      </div>
+
+      <a href="stats.html"
+         class="flex items-center px-4 py-2 rounded-lg hover:bg-[#01659F] transition">
+        <i data-feather="bar-chart-2" class="w-5 h-5 mr-3"></i>
+        <span>Statistiques</span>
+      </a>
+    </nav>
+
+    <div class="mt-auto space-y-1">
+      <a href="profil.html"
+         class="flex items-center px-4 py-2 rounded-lg bg-white text-[#014E82] transition">
+        <i data-feather="user" class="w-5 h-5 mr-3"></i>
+        <span>Profil</span>
+      </a>
+      <a href="support.html"
+         class="flex items-center px-4 py-2 rounded-lg hover:bg-[#01659F] transition">
+        <i data-feather="help-circle" class="w-5 h-5 mr-3"></i>
+        <span>Support</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <div class="flex-1 flex flex-col bg-blue-50">
+    <header class="flex items-center justify-between h-16 px-8 bg-white border-b shadow-sm">
+      <h1 class="text-2xl font-semibold text-gray-700">Profil</h1>
+      <div class="flex items-center space-x-4">
+        <div class="relative">
+          <button id="bellBtn" class="p-2 rounded-full hover:bg-gray-200 transition">
+            <i data-feather="bell" class="w-5 h-5"></i>
+          </button>
+          <div id="notificationsDropdown"
+               class="absolute right-0 top-full mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg
+                      opacity-0 invisible -translate-y-2 transition-all duration-200 pointer-events-none z-50">
+          </div>
+        </div>
+        <div class="relative">
+          <button id="userAvatar" class="p-2 rounded-full hover:bg-gray-200 transition">
+            <i data-feather="user" class="w-5 h-5"></i>
+          </button>
+          <div id="userDropdown"
+               class="absolute right-0 top-full mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg
+                      opacity-0 invisible -translate-y-2 transition-all duration-200 z-50">
+                      <a href="profil.html" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
+                      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Logout</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto p-8">
+      <div class="max-w-3xl mx-auto bg-white rounded-lg shadow">
+        <!-- Tabs -->
+        <div class="border-b">
+          <nav class="flex">
+            <button data-tab="personal-info"
+                    class="px-6 py-3 font-semibold text-gray-700 hover:bg-gray-100 focus:outline-none">
+              Personal Info
+            </button>
+            <button data-tab="security"
+                    class="px-6 py-3 font-semibold text-gray-700 hover:bg-gray-100 focus:outline-none">
+              Security
+            </button>
+            <button data-tab="preferences"
+                    class="px-6 py-3 font-semibold text-gray-700 hover:bg-gray-100 focus:outline-none">
+              Preferences
+            </button>
+          </nav>
+        </div>
+        <!-- Panels -->
+        <div id="personal-info" class="p-6 space-y-6">
+          <h2 class="text-lg font-semibold text-gray-700">Personal Info</h2>
+          <form class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-gray-600">Full Name</label>
+                <input type="text" value="Jean Dupont"
+                       class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500"/>
+              </div>
+              <div>
+                <label class="block text-gray-600">Email</label>
+                <input type="email" value="user@example.com"
+                       class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500"/>
+              </div>
+              <div>
+                <label class="block text-gray-600">Phone</label>
+                <input type="tel" value="+212600000000"
+                       class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500"/>
+              </div>
+              <div>
+                <label class="block text-gray-600">Department</label>
+                <input type="text" value="Finance"
+                       class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500"/>
+              </div>
+            </div>
+            <div class="text-right">
+              <button type="submit"
+                      class="px-6 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition">
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div id="security" class="hidden p-6 space-y-6">
+          <h2 class="text-lg font-semibold text-gray-700">Security</h2>
+          <form class="space-y-4">
+            <div>
+              <label class="block text-gray-600">Current Password</label>
+              <input type="password" required
+                     class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500"/>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-gray-600">New Password</label>
+                <input type="password" required
+                       class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500"/>
+              </div>
+              <div>
+                <label class="block text-gray-600">Confirm New Password</label>
+                <input type="password" required
+                       class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500"/>
+              </div>
+            </div>
+            <div class="text-right">
+              <button type="submit"
+                      class="px-6 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition">
+                Update Password
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div id="preferences" class="hidden p-6 space-y-6">
+          <h2 class="text-lg font-semibold text-gray-700">Preferences</h2>
+          <form class="space-y-4">
+            <div class="flex items-center">
+              <input id="pref-email" type="checkbox" checked
+                     class="h-5 w-5 text-sky-600 border-gray-300 rounded"/>
+              <label for="pref-email" class="ml-3 text-gray-600">Email notifications</label>
+            </div>
+            <div class="flex items-center">
+              <input id="pref-sms" type="checkbox"
+                     class="h-5 w-5 text-sky-600 border-gray-300 rounded"/>
+              <label for="pref-sms" class="ml-3 text-gray-600">SMS notifications</label>
+            </div>
+            <div class="flex items-center">
+              <input id="pref-push" type="checkbox" checked
+                     class="h-5 w-5 text-sky-600 border-gray-300 rounded"/>
+              <label for="pref-push" class="ml-3 text-gray-600">App push notifications</label>
+            </div>
+            <div class="text-right">
+              <button type="submit"
+                      class="px-6 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition">
+                Save Preferences
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      feather.replace();
+      function makeToggle(btnId, submenuId) {
+        const btn = document.getElementById(btnId);
+        const submenu = document.getElementById(submenuId);
+        const chevron = btn.querySelector('i:last-child');
+        btn.addEventListener('click', () => {
+          submenu.classList.toggle('hidden');
+          chevron.classList.toggle('rotate-180');
+        });
+      }
+      makeToggle('menu-enregistrer','submenu-enregistrer');
+      makeToggle('menu-consulter','submenu-consulter');
+
+      const bellBtn = document.getElementById('bellBtn');
+      const notificationsDropdown = document.getElementById('notificationsDropdown');
+      const userAvatar = document.getElementById('userAvatar');
+      const userDropdown = document.getElementById('userDropdown');
+      bellBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        notificationsDropdown.innerHTML = '<div class="px-4 py-2 text-gray-500">Aucune notification</div>';
+        notificationsDropdown.classList.toggle('invisible');
+        notificationsDropdown.classList.toggle('opacity-0');
+        notificationsDropdown.classList.toggle('-translate-y-2');
+        notificationsDropdown.classList.toggle('pointer-events-none');
+      });
+      document.addEventListener('click', e => {
+        if (!bellBtn.contains(e.target)) {
+          notificationsDropdown.classList.add('invisible','opacity-0','-translate-y-2','pointer-events-none');
+        }
+      });
+      userAvatar.addEventListener('click', e => {
+        e.stopPropagation();
+        userDropdown.classList.toggle('invisible');
+        userDropdown.classList.toggle('opacity-0');
+      });
+      document.addEventListener('click', e => {
+        if (!userAvatar.contains(e.target)) {
+          userDropdown.classList.add('invisible','opacity-0');
+        }
+      });
+
+      const tabs = document.querySelectorAll('[data-tab]');
+      tabs.forEach(btn => btn.addEventListener('click', () => {
+        tabs.forEach(b => b.classList.remove('bg-gray-100','border-b-2','border-sky-600'));
+        btn.classList.add('bg-gray-100','border-b-2','border-sky-600');
+        document.querySelectorAll('#personal-info,#security,#preferences').forEach(p => p.classList.add('hidden'));
+        document.getElementById(btn.dataset.tab).classList.remove('hidden');
+      }));
+      tabs[0].click();
+    });
+  </script>
+</body>
+</html>
