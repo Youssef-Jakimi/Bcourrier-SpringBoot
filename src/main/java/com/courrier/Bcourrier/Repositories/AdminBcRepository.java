@@ -1,6 +1,7 @@
 package com.courrier.Bcourrier.Repositories;
 
 import com.courrier.Bcourrier.Entities.Courrier;
+import com.courrier.Bcourrier.Enums.TypeCourrier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -10,13 +11,13 @@ import java.util.Map;
 
 public interface AdminBcRepository extends JpaRepository<Courrier, Long> {
 
-    long countByTypeAndArchiverFalse(String type);
+    long countByTypeAndArchiverFalse(TypeCourrier type);
 
-    long countByTypeAndArchiverTrue(String type);
+    long countByTypeAndArchiverTrue(TypeCourrier type);
 
     List<Courrier> findTop3ByOrderByDateRegistreDesc();
 
-    @Query("SELECT FUNCTION('DATE_FORMAT', c.dateRegistre, '%Y-%m') as month, COUNT(c) FROM Courrier c GROUP BY month")
+    @Query("SELECT c.dateRegistre, COUNT(c) FROM Courrier c WHERE c.dateRegistre IS NOT NULL GROUP BY FUNCTION('YEAR', c.dateRegistre), FUNCTION('MONTH', c.dateRegistre)")
     List<Object[]> countCourriersPerMonthRaw();
 
 
@@ -28,5 +29,3 @@ public interface AdminBcRepository extends JpaRepository<Courrier, Long> {
             return map;
         }
 }
-
-

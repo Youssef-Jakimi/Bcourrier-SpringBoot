@@ -83,9 +83,17 @@ public class Employe {
                 @Column(name = "R3", nullable = true)
                 private String r3;
 
+                @Column(name = "EmailNotifications")
+                private boolean EmailNotifications = false;
+
+                @Column(name = "SmsNotifications")
+                private boolean SmsNotifications = false;
+
+                @Column(name = "PushNotofications")
+                private boolean PushNotifications = false;
+
 
                 private String verificationToken;
-
 
 
 }

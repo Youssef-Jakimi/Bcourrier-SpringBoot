@@ -1,6 +1,7 @@
 package com.courrier.Bcourrier.Entities;
 
 import com.courrier.Bcourrier.Enums.Confidentialite;
+import com.courrier.Bcourrier.Enums.StatutCourrier;
 import com.courrier.Bcourrier.Enums.TypeCourrier;
 import com.courrier.Bcourrier.Enums.Urgence;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -73,6 +74,10 @@ public class Courrier {
 
     @Column(name = "attachment_path")
     private String attachmentPath;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "Status", nullable = true)
+    private StatutCourrier StatutCourrier;
 
     // Getters and Setters
 }

@@ -1,6 +1,6 @@
 package com.courrier.Bcourrier.Enums;
 
 public enum TypeCourrier {
-    ARRIVE,
+    ARRIVEE,
     DEPART,
 }
