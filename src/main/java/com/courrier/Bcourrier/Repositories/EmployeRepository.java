@@ -13,6 +13,7 @@ public interface EmployeRepository extends JpaRepository<Employe, Long> {
     // You will use this in your login logic later
     Optional<Employe> findByLogin(String login);
 
+
     // Optional: to avoid duplicates
     boolean existsByEmail(String email);
 

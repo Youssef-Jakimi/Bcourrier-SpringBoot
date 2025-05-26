@@ -97,11 +97,12 @@ public class AuthService {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid login or password");
         }
 
-
         String token = JwtUtil.generateToken(employe.getLogin());
 
-        return ResponseEntity.ok(Map.of("token", token));
-
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "role", employe.getRole()
+        ));
     }
 
 }

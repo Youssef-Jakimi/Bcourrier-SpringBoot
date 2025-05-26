@@ -10,4 +10,6 @@ import java.util.List;
 public interface ServiceInternRepository extends JpaRepository<ServiceIntern, Long> {
     List<ServiceIntern> findAllByOrderByNomAsc();
     List<ServiceIntern> findAllByIdIn(List<Long> ids);
+    ServiceIntern findByNom(String nom);
+
 }
