@@ -10,6 +10,7 @@ public class CourrierArriveeDTO {
     private String description;
     private String dateArrive;
     private String dateTraitement;
+    private String StatutCourrier;
     private int numeroRegistre;
     private String dateRegistre;
     private String signataire;

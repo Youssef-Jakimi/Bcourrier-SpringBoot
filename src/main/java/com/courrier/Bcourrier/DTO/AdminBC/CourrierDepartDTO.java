@@ -11,6 +11,7 @@ public class CourrierDepartDTO {
     private String dateDepart;       // You can adapt to match your schema (use Courrier dateRegistre or add a field)
     private int numeroRegistre;      // Courrier numeroRegistre
     private boolean archiver;        // Courrier archiver
+    private String statutCourrier;
     private String service;          // Only service name
     private String employe;          // Only employe name (prenom + nom)
     private String nomExpediteur;    // Depart specific
