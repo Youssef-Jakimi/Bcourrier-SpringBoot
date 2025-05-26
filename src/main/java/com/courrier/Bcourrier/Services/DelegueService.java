@@ -107,7 +107,7 @@ public class DelegueService {
                     dto.setId(d.getId());
                     dto.setObject(d.getCourrier().getObject());
                     dto.setDescription(d.getCourrier().getDescription());
-                    dto.setStatutCourrier(String.valueOf(c.getStatutCourrier()));
+                    dto.setStatutCourrier(String.valueOf(d.getCourrier().getStatutCourrier()));
                     dto.setDateDepart(d.getCourrier().getDateRegistre() != null ? d.getCourrier().getDateRegistre().toString() : null);
                     dto.setNumeroRegistre(d.getCourrier().getNumeroRegistre());
                     dto.setArchiver(d.getCourrier().isArchiver());
