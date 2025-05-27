@@ -179,13 +179,27 @@ public class DelegueService {
         dto.setConfidentialiteCounts(confCounts);
 
         // 6. Courriers par service (by service name)
-        Map<String, Integer> byService = courriers.stream()
-                .filter(c -> c.getService() != null)
-                .collect(Collectors.groupingBy(
-                        c -> c.getService().getNom(),
-                        Collectors.collectingAndThen(Collectors.counting(), Long::intValue)
-                ));
-        dto.setCourriersByService(byService);
+        Map<String, Map<String, Integer>> courriersByService =
+                courriers.stream()
+                        .filter(c -> c.getService() != null)
+                        .collect(Collectors.groupingBy(
+                                c -> c.getService().getNom(),
+                                Collectors.groupingBy(
+                                        c -> c.getType() == TypeCourrier.ARRIVEE ? "arrivee" : "depart",
+                                        Collectors.collectingAndThen(Collectors.counting(), Long::intValue)
+                                )
+                        ));
+
+                // make sure every service has both keys, even if zero
+                        courriersByService.values()
+                                .forEach(m -> {
+                                    m.putIfAbsent("arrivee", 0);
+                                    m.putIfAbsent("depart",  0);
+                                });
+
+                // set on your DTO
+                        dto.setCourriersByService(courriersByService);
+
 
         // 7. Courriers traités par employé (by employee full name)
         Map<String, Integer> byEmploye = courriers.stream()

@@ -17,7 +17,8 @@ import java.util.Optional;
 public class ProfilService {
     @Autowired
     private final EmployeRepository employeRepository;
-    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private final PasswordEncoder passwordEncoder;
     public boolean updatePersonalInfo(String login, PersonalInfoDTO dto) {
         Optional<Employe> opt = employeRepository.findByLogin(login);
         if (opt.isEmpty()) return false;

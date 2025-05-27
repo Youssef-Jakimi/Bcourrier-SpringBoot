@@ -14,7 +14,7 @@ public class StatsDTO {
     private List<Integer> monthlyArrivees;   // one per month, same order as labels
     private List<Integer> monthlyDeparts;
     private Map<String, Integer> confidentialiteCounts; // ex: {"ROUTINE": 10, "SECRET": 7, ...}
-    private Map<String, Integer> courriersByService;    // ex: {"RH": 13, ...}
+    private Map<String, Map<String,Integer>> courriersByService;
     private Map<String, Integer> courriersByEmploye;    // ex: {"Alice": 5, ...}
     private double traitementMoyenJours;                // e.g. 3.5
 }
