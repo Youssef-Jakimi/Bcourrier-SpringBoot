@@ -8,5 +8,4 @@ public class PersonalInfoDTO {
     private String email;
     private String phone;
     private String department;
-    private Long userId;
 }

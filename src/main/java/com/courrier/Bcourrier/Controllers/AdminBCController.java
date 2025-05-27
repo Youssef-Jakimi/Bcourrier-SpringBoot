@@ -33,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.Principal;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -129,8 +130,8 @@ public class AdminBCController {
     @PostMapping("/profile/update-personal")
     public ResponseEntity<String> updatePersonalInfo(
             @RequestBody PersonalInfoDTO dto,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        String login = userDetails.getUsername();
+            Principal principal) {
+        String login = principal.getName();
         boolean ok = profilService.updatePersonalInfo(login, dto);
         return ok ? ResponseEntity.ok("Personal info updated")
                 : ResponseEntity.status(400).body("Failed to update");
@@ -139,8 +140,8 @@ public class AdminBCController {
     @PostMapping("/profile/change-password")
     public ResponseEntity<String> changePassword(
             @RequestBody ChangePasswordDTO dto,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        String login = userDetails.getUsername();
+            Principal principal) {
+        String login = principal.getName();
         boolean ok = profilService.changePassword(login, dto);
         return ok ? ResponseEntity.ok("Password updated")
                 : ResponseEntity.status(400).body("Current password incorrect");
@@ -149,8 +150,8 @@ public class AdminBCController {
     @PostMapping("/profile/update-preferences")
     public ResponseEntity<String> updatePreferences(
             @RequestBody PreferencesDTO dto,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        String login = userDetails.getUsername();
+            Principal principal) {
+        String login = principal.getName();
         boolean ok = profilService.updatePreferences(login, dto);
         return ok ? ResponseEntity.ok("Preferences updated")
                 : ResponseEntity.status(400).body("Failed to update preferences");
