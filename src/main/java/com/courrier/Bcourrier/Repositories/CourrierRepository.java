@@ -21,6 +21,9 @@ public interface CourrierRepository extends JpaRepository<Courrier, Long> {
 
     List<Courrier> findByServiceAndTypeAndArchiverFalse(ServiceIntern service, TypeCourrier type);
     List<Courrier> findByServiceAndTypeAndArchiverTrue(ServiceIntern service, TypeCourrier type);
-    Long countByServiceAndTypeAndArchiverFalse(ServiceIntern service, String type);
-    Long countByServiceAndTypeAndArchiverTrue(ServiceIntern service, String type);
+    Long countByServiceAndTypeAndArchiverFalse(ServiceIntern service, TypeCourrier type);
+    Long countByServiceAndTypeAndArchiverTrue(ServiceIntern service, TypeCourrier type);
+
+    List<Courrier> findTop3ByEmploye_LoginOrderByDateRegistreDesc(String login);
+
 }

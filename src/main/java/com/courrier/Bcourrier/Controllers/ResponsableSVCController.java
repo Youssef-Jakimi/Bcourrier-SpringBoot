@@ -1,13 +1,19 @@
 package com.courrier.Bcourrier.Controllers;
 
+import com.courrier.Bcourrier.DTO.Profile.ChangePasswordDTO;
+import com.courrier.Bcourrier.DTO.Profile.PersonalInfoDTO;
+import com.courrier.Bcourrier.DTO.Profile.PreferencesDTO;
 import com.courrier.Bcourrier.DTO.ResposableSVC.CourrierSimpleDTO;
+import com.courrier.Bcourrier.DTO.ResposableSVC.CourrierStatusUpdateDTO;
 import com.courrier.Bcourrier.DTO.ResposableSVC.DashboardSVCDTO;
+import com.courrier.Bcourrier.Services.ProfilService;
 import com.courrier.Bcourrier.Services.ResponsableSVCService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +27,7 @@ import java.util.List;
 public class ResponsableSVCController {
     @Autowired
     private ResponsableSVCService responsableSVCService;
-
+    private ProfilService profilService;
 
     // DASHBOARD BRIEF
     @GetMapping("/dashboard")
@@ -58,4 +64,46 @@ public class ResponsableSVCController {
         return responsableSVCService.getDepartArchive(login);
     }
 
+    @PostMapping("/courriers/update-status")
+    public ResponseEntity<String> updateCourrierStatus(
+            @RequestBody CourrierStatusUpdateDTO dto,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        String login = userDetails.getUsername();
+        boolean ok = responsableSVCService.updateCourrierStatus(login, dto);
+        return ok
+                ? ResponseEntity.ok("Statut mis à jour")
+                : ResponseEntity.status(403).body("Action non autorisée ou courrier introuvable");
+    }
+
+    @PostMapping("/profile/update-personal")
+    public ResponseEntity<String> updatePersonalInfo(
+            @RequestBody PersonalInfoDTO dto,
+            Principal principal) {
+        String login = principal.getName();
+        boolean ok = profilService.updatePersonalInfo(login, dto);
+        return ok ? ResponseEntity.ok("Personal info updated")
+                : ResponseEntity.status(400).body("Failed to update");
+    }
+
+
+
+    @PostMapping("/profile/change-password")
+    public ResponseEntity<String> changePassword(
+            @RequestBody ChangePasswordDTO dto,
+            Principal principal) {
+        String login = principal.getName();
+        boolean ok = profilService.changePassword(login, dto);
+        return ok ? ResponseEntity.ok("Password updated")
+                : ResponseEntity.status(400).body("Current password incorrect");
+    }
+
+    @PostMapping("/profile/update-preferences")
+    public ResponseEntity<String> updatePreferences(
+            @RequestBody PreferencesDTO dto,
+            Principal principal) {
+        String login = principal.getName();
+        boolean ok = profilService.updatePreferences(login, dto);
+        return ok ? ResponseEntity.ok("Preferences updated")
+                : ResponseEntity.status(400).body("Failed to update preferences");
+    }
 }

@@ -1,11 +1,13 @@
 package com.courrier.Bcourrier.Services;
 
 import com.courrier.Bcourrier.DTO.ResposableSVC.CourrierSimpleDTO;
+import com.courrier.Bcourrier.DTO.ResposableSVC.CourrierStatusUpdateDTO;
 import com.courrier.Bcourrier.DTO.ResposableSVC.DashboardSVCDTO;
 import com.courrier.Bcourrier.DTO.ResposableSVC.DashboardSVCDTO;
 import com.courrier.Bcourrier.Entities.Courrier;
 import com.courrier.Bcourrier.Entities.Employe;
 import com.courrier.Bcourrier.Entities.ServiceIntern;
+import com.courrier.Bcourrier.Enums.StatutCourrier;
 import com.courrier.Bcourrier.Enums.TypeCourrier;
 import com.courrier.Bcourrier.Repositories.CourrierRepository;
 import com.courrier.Bcourrier.Repositories.EmployeRepository;
@@ -32,10 +34,10 @@ public class ResponsableSVCService {
     public DashboardSVCDTO getDashboardBrief(String login) {
         ServiceIntern svc = getCurrentResponsableService(login);
         DashboardSVCDTO dto = new DashboardSVCDTO();
-        dto.setArriveeEnCours(courrierRepository.countByServiceAndTypeAndArchiverFalse(svc, TypeCourrier.ARRIVEE.toString()));
-        dto.setArriveeArchive(courrierRepository.countByServiceAndTypeAndArchiverTrue(svc, TypeCourrier.ARRIVEE.toString()));
-        dto.setDepartEnCours(courrierRepository.countByServiceAndTypeAndArchiverFalse(svc, TypeCourrier.DEPART.toString()));
-        dto.setDepartArchive(courrierRepository.countByServiceAndTypeAndArchiverTrue(svc, TypeCourrier.DEPART.toString()));
+        dto.setArriveeEnCours(courrierRepository.countByServiceAndTypeAndArchiverFalse(svc, TypeCourrier.ARRIVEE));
+        dto.setArriveeArchive(courrierRepository.countByServiceAndTypeAndArchiverTrue(svc, TypeCourrier.ARRIVEE));
+        dto.setDepartEnCours(courrierRepository.countByServiceAndTypeAndArchiverFalse(svc, TypeCourrier.DEPART));
+        dto.setDepartArchive(courrierRepository.countByServiceAndTypeAndArchiverTrue(svc, TypeCourrier.DEPART));
         return dto;
     }
 
@@ -80,5 +82,24 @@ public class ResponsableSVCService {
         dto.setSignataire(c.getSignataire());
         dto.setUrgence(c.getUrgence() != null ? c.getUrgence().toString() : null);
         return dto;
+    }
+
+    public boolean updateCourrierStatus(String login, CourrierStatusUpdateDTO dto) {
+        Employe responsable = employeRepository.findByLogin(login).orElse(null);
+        if (responsable == null || responsable.getService() == null) return false;
+
+        Courrier courrier = courrierRepository.findById(dto.getCourrierId()).orElse(null);
+        if (courrier == null) return false;
+
+        // Only allow update if this courrier belongs to the responsible's service
+        if (courrier.getService() == null ||
+                !courrier.getService().getId().equals(responsable.getService().getId())) {
+            return false;
+        }
+
+        // Here you assume you have a 'statut' or similar field in Courrier (String or Enum)
+        courrier.setStatutCourrier(StatutCourrier.valueOf(dto.getNewStatus()));
+        courrierRepository.save(courrier);
+        return true;
     }
 }

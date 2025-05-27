@@ -4,7 +4,6 @@ public enum StatutCourrier {
     Enregistré,
     En_Cours,
     Traité,
-    Archivé,
     Retoure,
 
 
