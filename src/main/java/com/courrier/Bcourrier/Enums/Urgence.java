@@ -1,7 +1,7 @@
 package com.courrier.Bcourrier.Enums;
 
 public enum Urgence {
-    NORMAL,
+    ROUTINE,
     URGENT,
-    MOINS_URGENT,
+    FLASH,
 }

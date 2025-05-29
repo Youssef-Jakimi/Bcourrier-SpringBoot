@@ -1,9 +1,6 @@
 package com.courrier.Bcourrier.Controllers;
 
-import com.courrier.Bcourrier.DTO.AdminBC.AdminBCDashboardDTO;
-import com.courrier.Bcourrier.DTO.AdminBC.CourrierArriveeDTO;
-import com.courrier.Bcourrier.DTO.AdminBC.CourrierDepartDTO;
-import com.courrier.Bcourrier.DTO.AdminBC.StatsDTO;
+import com.courrier.Bcourrier.DTO.AdminBC.*;
 import com.courrier.Bcourrier.DTO.Profile.ChangePasswordDTO;
 import com.courrier.Bcourrier.DTO.Profile.PersonalInfoDTO;
 import com.courrier.Bcourrier.DTO.Profile.PreferencesDTO;
@@ -13,10 +10,7 @@ import com.courrier.Bcourrier.Entities.ServiceIntern;
 import com.courrier.Bcourrier.Enums.Confidentialite;
 import com.courrier.Bcourrier.Enums.Urgence;
 import com.courrier.Bcourrier.Enums.VoieExpedition;
-import com.courrier.Bcourrier.Repositories.AdminBcRepository;
-import com.courrier.Bcourrier.Repositories.CourrierRepository;
-import com.courrier.Bcourrier.Repositories.EmployeRepository;
-import com.courrier.Bcourrier.Repositories.ServiceInternRepository;
+import com.courrier.Bcourrier.Repositories.*;
 import com.courrier.Bcourrier.Services.AdminBcService;
 import com.courrier.Bcourrier.Services.ProfilService;
 import lombok.Data;
@@ -51,6 +45,8 @@ public class AdminBCController {
     private final AdminBcService courrierService;
     private final ServiceInternRepository serviceInternRepository;
     private final AdminBcService adminBcService;
+    private final UrgenceRepository urgenceRepository;
+    private final ConfidentialitéRepository confidentialitéRepository;
     private final ProfilService profilService;
     private final AdminBcRepository adminBcRepository;
     private final CourrierRepository courrierRepository;
@@ -84,6 +80,16 @@ public class AdminBCController {
                     .body("Erreur lors de l'enregistrement");
         }
     }
+
+    @GetMapping("/ajouter-courrier")
+    public AjouterDTO getStaticOptions() {
+        AjouterDTO dto = new AjouterDTO();
+        dto.setUrgences(urgenceRepository.findAll());
+        dto.setConfidentialites(confidentialitéRepository.findAll());
+        dto.setServices(serviceInternRepository.findAll());
+        return dto;
+    }
+
 
     @PostMapping("/admin/courriers/depart")
     public ResponseEntity<String> enregistrerCourrierDepart(

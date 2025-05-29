@@ -282,8 +282,8 @@ public class AdminBcService {
         // make sure every service has both keys, even if zero
         courriersByService.values()
                 .forEach(m -> {
-                    m.putIfAbsent("arrivees", 0);
-                    m.putIfAbsent("departs",  0);
+                    m.putIfAbsent("arrivee", 0);
+                    m.putIfAbsent("depart",  0);
                 });
 
         // set on your DTO
