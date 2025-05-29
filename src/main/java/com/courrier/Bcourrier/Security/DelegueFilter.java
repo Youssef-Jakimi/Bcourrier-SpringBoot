@@ -39,8 +39,8 @@
 //                Employe employe = employeRepository.findByLogin(login)
 //                        .orElse(null);
 //
-//                if (employe == null || !(employe.getRole() == Role.ADMINSI)) {
-//                    response.sendError(HttpStatus.FORBIDDEN.value(), "Access denied: not an AdminSI user");
+//                if (employe == null || !(employe.getRole() == Role.DELEGUE)) {
+//                    response.sendError(HttpStatus.FORBIDDEN.value(), "Access denied: not an Delegue user");
 //                    return;
 //                }
 //            }
@@ -51,6 +51,6 @@
 //
 //    @Override
 //    protected boolean shouldNotFilter(HttpServletRequest request) {
-//        return !request.getRequestURI().startsWith("/api/admin-si");
+//        return !request.getRequestURI().startsWith("/api/delegue");
 //    }
 //}

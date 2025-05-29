@@ -118,14 +118,15 @@ public class AdminBCController {
 
 
     @GetMapping("/courriers/arrivees")
-    public ResponseEntity<List<CourrierArriveeDTO>> getArriveeCourriers() {
-        return ResponseEntity.ok(adminBcService.getAllArriveeCourrierDTOs());
+    public CourrierArriveeResponseDTO getArrivees() {
+        return adminBcService.getAllArriveeCourrierDTOs();
     }
 
     @GetMapping("/courriers/departs")
-    public ResponseEntity<List<CourrierDepartDTO>> getDepartCourriers() {
-        return ResponseEntity.ok(adminBcService.getAllDepartCourrierDTOs());
+    public CourrierDepartResponseDTO getDeparts() {
+        return adminBcService.getAllDepartCourrierDTOs();
     }
+
 
     @GetMapping("/stats")
     public ResponseEntity<StatsDTO> getStats() {
@@ -214,6 +215,13 @@ public class AdminBCController {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to view file: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/courriers/update")
+    public ResponseEntity<String> adminBCUpdateCourrier(@RequestBody AdminBCUpdateCourrierDTO dto) {
+        boolean ok = adminBcService.adminBCUpdateCourrier(dto);
+        return ok ? ResponseEntity.ok("Courrier mis à jour")
+                : ResponseEntity.status(400).body("Mise à jour échouée");
     }
 
 

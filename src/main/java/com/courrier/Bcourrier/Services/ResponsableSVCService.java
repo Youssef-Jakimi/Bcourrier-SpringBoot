@@ -97,9 +97,18 @@ public class ResponsableSVCService {
             return false;
         }
 
-        // Here you assume you have a 'statut' or similar field in Courrier (String or Enum)
-        courrier.setStatutCourrier(StatutCourrier.valueOf(dto.getNewStatus()));
+        // Update status
+        StatutCourrier newStatut = StatutCourrier.valueOf(dto.getNewStatus());
+        courrier.setStatutCourrier(newStatut);
+
+        // If status is RETOUR, set service and employe to null
+        if (newStatut == StatutCourrier.RETOURE) {
+            courrier.setService(null);
+            courrier.setEmploye(null);
+        }
+
         courrierRepository.save(courrier);
         return true;
     }
+
 }

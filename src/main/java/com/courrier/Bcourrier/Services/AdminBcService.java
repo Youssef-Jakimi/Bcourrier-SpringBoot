@@ -1,9 +1,6 @@
 package com.courrier.Bcourrier.Services;
 
-import com.courrier.Bcourrier.DTO.AdminBC.AdminBCDashboardDTO;
-import com.courrier.Bcourrier.DTO.AdminBC.CourrierArriveeDTO;
-import com.courrier.Bcourrier.DTO.AdminBC.CourrierDepartDTO;
-import com.courrier.Bcourrier.DTO.AdminBC.StatsDTO;
+import com.courrier.Bcourrier.DTO.AdminBC.*;
 import com.courrier.Bcourrier.Entities.Courrier;
 import com.courrier.Bcourrier.Entities.Depart;
 import com.courrier.Bcourrier.Entities.ServiceIntern;
@@ -34,6 +31,8 @@ public class AdminBcService {
     @Autowired
     private final AdminBcRepository adminBcRepository;
     private final EmployeRepository employeRepository;
+    private final UrgenceRepository urgenceRepository;
+    private final ConfidentialitéRepository confidentialiteRepository;
     @Autowired
     private final DepartRepository departRepository;
     @Autowired
@@ -162,8 +161,10 @@ public class AdminBcService {
         departRepository.save(depart);
     }
 
-    public List<CourrierArriveeDTO> getAllArriveeCourrierDTOs() {
-        return courrierRepository.findByType(TypeCourrier.ARRIVEE)
+    public CourrierArriveeResponseDTO getAllArriveeCourrierDTOs() {
+        CourrierArriveeResponseDTO resp = new CourrierArriveeResponseDTO();
+
+        List<CourrierArriveeDTO> courriers = courrierRepository.findByType(TypeCourrier.ARRIVEE)
                 .stream()
                 .map(c -> {
                     CourrierArriveeDTO dto = new CourrierArriveeDTO();
@@ -172,6 +173,7 @@ public class AdminBcService {
                     dto.setDescription(c.getDescription());
                     dto.setDateArrive(c.getDateArrive() != null ? c.getDateArrive().toString() : null);
                     dto.setDateTraitement(c.getDateTraitement() != null ? c.getDateTraitement().toString() : null);
+                    dto.setStatutCourrier(c.getStatutCourrier() != null ? c.getStatutCourrier().toString() : null);
                     dto.setNumeroRegistre(c.getNumeroRegistre());
                     dto.setDateRegistre(c.getDateRegistre() != null ? c.getDateRegistre().toString() : null);
                     dto.setSignataire(c.getSignataire());
@@ -185,11 +187,18 @@ public class AdminBcService {
                     return dto;
                 })
                 .toList();
+
+        resp.setCourriers(courriers);
+        resp.setServices(serviceInternRepository.findAll());
+        resp.setUrgences(Arrays.asList(Urgence.values()));
+        resp.setConfidentialites(Arrays.asList(Confidentialite.values()));
+        return resp;
     }
 
+    public CourrierDepartResponseDTO getAllDepartCourrierDTOs() {
+        CourrierDepartResponseDTO resp = new CourrierDepartResponseDTO();
 
-    public List<CourrierDepartDTO> getAllDepartCourrierDTOs() {
-        return departRepository.findAll()
+        List<CourrierDepartDTO> courriers = departRepository.findAll()
                 .stream()
                 .map(d -> {
                     CourrierDepartDTO dto = new CourrierDepartDTO();
@@ -199,6 +208,7 @@ public class AdminBcService {
                     dto.setDateDepart(d.getCourrier().getDateRegistre() != null ? d.getCourrier().getDateRegistre().toString() : null);
                     dto.setNumeroRegistre(d.getCourrier().getNumeroRegistre());
                     dto.setArchiver(d.getCourrier().isArchiver());
+                    dto.setStatutCourrier(d.getCourrier().getStatutCourrier() != null ? d.getCourrier().getStatutCourrier().toString() : null);
                     dto.setService(d.getCourrier().getService() != null ? d.getCourrier().getService().getNom() : null);
                     dto.setEmploye(d.getCourrier().getEmploye() != null ? d.getCourrier().getEmploye().getPrenom() + " " + d.getCourrier().getEmploye().getNom() : null);
                     dto.setNomExpediteur(d.getNomExpediteur());
@@ -210,7 +220,14 @@ public class AdminBcService {
                     return dto;
                 })
                 .toList();
+
+        resp.setCourriers(courriers);
+        resp.setServices(serviceInternRepository.findAll());
+        resp.setUrgences(Arrays.asList(Urgence.values()));
+        resp.setConfidentialites(Arrays.asList(Confidentialite.values()));
+        return resp;
     }
+
 
 
     public StatsDTO getStats() {
@@ -315,6 +332,29 @@ public class AdminBcService {
         dto.setTraitementMoyenJours(Math.round(traitementMoyen * 10.0) / 10.0);
 
         return dto;
+    }
+
+    public boolean adminBCUpdateCourrier(AdminBCUpdateCourrierDTO dto) {
+        Courrier courrier = courrierRepository.findById(dto.getCourrierId()).orElse(null);
+        if (courrier == null) return false;
+
+        // Update Service
+        if (dto.getServiceId() != null) {
+            serviceInternRepository.findById(dto.getServiceId()).ifPresent(courrier::setService);
+        }
+
+        // Update Urgence
+        if (dto.getUrgence() != null) {
+            courrier.setUrgence(Urgence.valueOf(dto.getUrgence()));
+        }
+
+        // Update Confidentialite
+        if (dto.getConfidentialite() != null) {
+            courrier.setDegreConfiden(Confidentialite.valueOf(dto.getConfidentialite()));
+        }
+
+        courrierRepository.save(courrier);
+        return true;
     }
 
 

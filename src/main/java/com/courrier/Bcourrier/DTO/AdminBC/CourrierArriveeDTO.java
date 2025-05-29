@@ -1,6 +1,5 @@
 package com.courrier.Bcourrier.DTO.AdminBC;
 
-
 import lombok.Data;
 
 @Data
@@ -10,16 +9,15 @@ public class CourrierArriveeDTO {
     private String description;
     private String dateArrive;
     private String dateTraitement;
-    private String StatutCourrier;
+    private String statutCourrier;     // fixed field name (lowercase s)
     private int numeroRegistre;
     private String dateRegistre;
     private String signataire;
     private boolean archiver;
-    private String service;  // Only service name
-    private String employe;  // Only employe name (prenom + nom)
+    private String service;            // Only service name
+    private String employe;            // Only employe name (prenom + nom)
     private String nature;
     private String degreConfiden;
     private String urgence;
     private String motDes;
 }
-
