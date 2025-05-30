@@ -60,6 +60,7 @@ public class AdminBCController {
     @PostMapping("/admin/courriers/arrivee")
     public ResponseEntity<String> enregistrerCourrierArrivee(
             @RequestParam("signataire") String signataire,
+            @RequestParam("nature") String nature,
             @RequestParam("objet") String objet,
             @RequestParam("description") String description,
             @RequestParam("numeroRegistre") int numeroRegistre,
@@ -70,7 +71,7 @@ public class AdminBCController {
 
         try {
             courrierService.enregistrerCourrierArrivee(
-                    signataire, objet, description, numeroRegistre,
+                    signataire,nature, objet, description, numeroRegistre,
                     degreConfidentialite, urgence, serviceId, file
             );
             return ResponseEntity.ok("Courrier enregistré avec succès");
@@ -94,6 +95,7 @@ public class AdminBCController {
     @PostMapping("/admin/courriers/depart")
     public ResponseEntity<String> enregistrerCourrierDepart(
             @RequestParam("objet") String objet,
+            @RequestParam("nature") String nature,
             @RequestParam("description") String description,
             @RequestParam("degreConfidentialite") Confidentialite degreConfidentialite,
             @RequestParam("urgence") Urgence urgence,
@@ -106,7 +108,7 @@ public class AdminBCController {
 
         try {
             courrierService.enregistrerCourrierDepart(
-                    objet, description, degreConfidentialite, urgence, serviceId, attachment,nomExpediteur, voieExpedition
+                    objet,nature, description, degreConfidentialite, urgence, serviceId, attachment,nomExpediteur, voieExpedition
             );
             return ResponseEntity.ok("Départ enregistré avec succès");
         } catch (Exception e) {

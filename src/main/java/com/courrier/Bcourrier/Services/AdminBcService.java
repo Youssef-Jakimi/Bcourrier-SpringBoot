@@ -84,6 +84,7 @@ public class AdminBcService {
 
     public void enregistrerCourrierArrivee(
             String signataire,
+            String nature,
             String objet,
             String description,
             int numeroRegistre,
@@ -105,6 +106,7 @@ public class AdminBcService {
         Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
         Courrier courrier = new Courrier();
         courrier.setSignataire(signataire);
+        courrier.setNature(nature);
         courrier.setObject(objet);
         courrier.setDescription(description);
         courrier.setDateArrive(today);
@@ -124,6 +126,7 @@ public class AdminBcService {
 
     public void enregistrerCourrierDepart(
             String objet,
+            String nature,
             String description,
             Confidentialite degreConfidentialite,
             Urgence urgence,
@@ -147,6 +150,7 @@ public class AdminBcService {
 
         Courrier courrier = new Courrier();
         courrier.setObject(objet);
+        courrier.setNature(nature);
         courrier.setDescription(description);
         courrier.setDegreConfiden(degreConfidentialite);
         courrier.setUrgence(urgence);
