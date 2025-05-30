@@ -32,18 +32,21 @@
 //
 //        String authHeader = request.getHeader("Authorization");
 //
-//        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-//            String jwtToken = authHeader.substring(7);
-//            String login = jwtUtil.extractLogin(jwtToken);
+//        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//            response.sendError(HttpStatus.FORBIDDEN.value(), "Access denied: JWT token is required");
+//            return;
+//        }
 //
-//            if (login != null) {
-//                Employe employe = employeRepository.findByLogin(login)
-//                        .orElse(null);
+//        String jwtToken = authHeader.substring(7);
+//        String login = jwtUtil.extractLogin(jwtToken);
 //
-//                if (employe == null || !(employe.getRole() == Role.ADMINBC)) {
-//                    response.sendError(HttpStatus.FORBIDDEN.value(), "Access denied: not an AdminBC user");
-//                    return;
-//                }
+//        if (login != null) {
+//            Employe employe = employeRepository.findByLogin(login)
+//                    .orElse(null);
+//
+//            if (employe == null || !(employe.getRole() == Role.ADMINBC)) {
+//                response.sendError(HttpStatus.FORBIDDEN.value(), "Access denied: not an AdminBC user");
+//                return;
 //            }
 //        }
 //

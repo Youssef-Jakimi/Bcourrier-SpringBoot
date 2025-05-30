@@ -2,8 +2,8 @@ package com.courrier.Bcourrier.Enums;
 
 public enum Role {
     DELEGUE,
-    RESPONSABLERH,
-    CHEFSERVICE,
+    RESPONSABLESVC,
+    RH,
     ADMINBC,
     ADMINSI,
 }

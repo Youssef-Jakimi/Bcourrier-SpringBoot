@@ -5,6 +5,8 @@
 //import com.courrier.Bcourrier.config.JwtUtil;
 //import jakarta.servlet.FilterChain;
 //import jakarta.servlet.ServletException;
+//import com.courrier.Bcourrier.Enums.Role;
+//
 //import jakarta.servlet.http.HttpServletRequest;
 //import jakarta.servlet.http.HttpServletResponse;
 //import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,7 @@
 //import java.io.IOException;
 //
 //@Component
-//public class AdminSIFilter extends OncePerRequestFilter {
+//public class RHFilter extends OncePerRequestFilter {
 //
 //    @Autowired
 //    private JwtUtil jwtUtil;
@@ -31,18 +33,21 @@
 //
 //        String authHeader = request.getHeader("Authorization");
 //
-//        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-//            String jwtToken = authHeader.substring(7);
-//            String login = jwtUtil.extractLogin(jwtToken);
+//        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//            response.sendError(HttpStatus.FORBIDDEN.value(), "Access denied: JWT token is required");
+//            return;
+//        }
 //
-//            if (login != null) {
-//                Employe employe = employeRepository.findByLogin(login)
-//                        .orElse(null);
+//        String jwtToken = authHeader.substring(7);
+//        String login = jwtUtil.extractLogin(jwtToken);
 //
-//                if (employe == null || !(employe.getRole() == Role.RH)) {
-//                    response.sendError(HttpStatus.FORBIDDEN.value(), "Access denied: not an RH user");
-//                    return;
-//                }
+//        if (login != null) {
+//            Employe employe = employeRepository.findByLogin(login)
+//                    .orElse(null);
+//
+//            if (employe == null || !(employe.getRole() == Role.RH)) {
+//                response.sendError(HttpStatus.FORBIDDEN.value(), "Access denied: not an AdminBC user");
+//                return;
 //            }
 //        }
 //

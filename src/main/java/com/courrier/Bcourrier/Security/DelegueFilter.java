@@ -1,6 +1,7 @@
 //package com.courrier.Bcourrier.Security;
 //
 //import com.courrier.Bcourrier.Entities.Employe;
+//import com.courrier.Bcourrier.Enums.Role;
 //import com.courrier.Bcourrier.Repositories.EmployeRepository;
 //import com.courrier.Bcourrier.config.JwtUtil;
 //import jakarta.servlet.FilterChain;
@@ -15,7 +16,7 @@
 //import java.io.IOException;
 //
 //@Component
-//public class AdminSIFilter extends OncePerRequestFilter {
+//public class DelegueFilter extends OncePerRequestFilter {
 //
 //    @Autowired
 //    private JwtUtil jwtUtil;
@@ -31,18 +32,21 @@
 //
 //        String authHeader = request.getHeader("Authorization");
 //
-//        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-//            String jwtToken = authHeader.substring(7);
-//            String login = jwtUtil.extractLogin(jwtToken);
+//        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//            response.sendError(HttpStatus.FORBIDDEN.value(), "Access denied: JWT token is required");
+//            return;
+//        }
 //
-//            if (login != null) {
-//                Employe employe = employeRepository.findByLogin(login)
-//                        .orElse(null);
+//        String jwtToken = authHeader.substring(7);
+//        String login = jwtUtil.extractLogin(jwtToken);
 //
-//                if (employe == null || !(employe.getRole() == Role.DELEGUE)) {
-//                    response.sendError(HttpStatus.FORBIDDEN.value(), "Access denied: not an Delegue user");
-//                    return;
-//                }
+//        if (login != null) {
+//            Employe employe = employeRepository.findByLogin(login)
+//                    .orElse(null);
+//
+//            if (employe == null || !(employe.getRole() == Role.DELEGUE)) {
+//                response.sendError(HttpStatus.FORBIDDEN.value(), "Access denied: not an AdminBC user");
+//                return;
 //            }
 //        }
 //

@@ -112,6 +112,7 @@ public class AdminBcService {
         courrier.setNumeroRegistre(numeroRegistre);
         courrier.setDegreConfiden(degreConfidentialite);
         courrier.setUrgence(urgence);
+        courrier.setType(TypeCourrier.ARRIVEE);
         courrier.setAttachmentPath(filePath);
         courrier.setService(service.get());
 
