@@ -81,7 +81,7 @@ public class AdminBCController {
         }
     }
 
-    @GetMapping("/ajouter-courrier")
+    @GetMapping(value = {"/admin/courriers/arrivee", "/admin/courriers/depart"})
     public AjouterDTO getStaticOptions() {
         AjouterDTO dto = new AjouterDTO();
         dto.setUrgences(urgenceRepository.findAll());
