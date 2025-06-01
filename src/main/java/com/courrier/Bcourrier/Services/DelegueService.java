@@ -35,12 +35,21 @@ public class DelegueService {
     public AdminBCDashboardDTO getAdminDashboardData() {
         AdminBCDashboardDTO dto = new AdminBCDashboardDTO();
 
-        dto.setTotalCourriersArrivee(delegueRepository.countByTypeAndArchiverFalse(TypeCourrier.ARRIVEE));
-        dto.setTotalCourriersDepart(delegueRepository.countByTypeAndArchiverFalse(TypeCourrier.DEPART));
-        dto.setTotalArriveeArchives(delegueRepository.countByTypeAndArchiverTrue(TypeCourrier.ARRIVEE));
-        dto.setTotalDepartArchives(delegueRepository.countByTypeAndArchiverTrue(TypeCourrier.DEPART));
+        // ─── Totals ───
+        dto.setTotalCourriersArrivee(
+                delegueRepository.countByTypeAndArchiverFalse(TypeCourrier.ARRIVEE)
+        );
+        dto.setTotalCourriersDepart(
+                delegueRepository.countByTypeAndArchiverFalse(TypeCourrier.DEPART)
+        );
+        dto.setTotalArriveeArchives(
+                delegueRepository.countByTypeAndArchiverTrue(TypeCourrier.ARRIVEE)
+        );
+        dto.setTotalDepartArchives(
+                delegueRepository.countByTypeAndArchiverTrue(TypeCourrier.DEPART)
+        );
 
-        // Map only safe fields for last 3 courriers
+        // ─── Last 3 courriers ───
         List<Map<String, Object>> last3 = delegueRepository.findTop3ByOrderByDateRegistreDesc()
                 .stream()
                 .map(c -> {
@@ -52,23 +61,59 @@ public class DelegueService {
                     map.put("dateRegistre", c.getDateRegistre());
                     map.put("signataire", c.getSignataire());
                     map.put("service", c.getService() != null ? c.getService().getNom() : null);
-                    map.put("employe", c.getEmploye() != null ? c.getEmploye().getPrenom() + " " + c.getEmploye().getNom() : null);
+                    map.put(
+                            "employe",
+                            c.getEmploye() != null
+                                    ? c.getEmploye().getPrenom() + " " + c.getEmploye().getNom()
+                                    : null
+                    );
                     return map;
                 })
                 .toList();
-
         dto.setLast3Courriers(last3);
 
-        // Monthly trend map
-        Map<String, Long> trendMap = new LinkedHashMap<>();
-        for (Object[] row : delegueRepository.countCourriersPerMonthRaw()) {
-            if (row[0] != null) {
-                LocalDate date = (LocalDate) row[0];
-                String monthKey = date.getYear() + "-" + String.format("%02d", date.getMonthValue());
-                trendMap.put(monthKey, (Long) row[1]);
-            }
+        // ─── Monthly trend: last 7 months (ARRIVEE vs DEPART) ───
+        List<Courrier> courriers = courrierRepository.findAll();
+
+        List<String> monthLabels   = new ArrayList<>();
+        List<Integer> monthlyArrivees = new ArrayList<>();
+        List<Integer> monthlyDeparts  = new ArrayList<>();
+
+        LocalDate now = LocalDate.now(); // system default zone (Africa/Casablanca in your setup)
+
+        // Loop from (now.minusMonths(6)) up to current month: total of 7 months.
+        for (int i = 0; i < 7; i++) {
+            LocalDate month = now.minusMonths(6 - i);
+            // Label = first three letters with initial uppercase, e.g. "Jan", "Feb"
+            String label = month.getMonth().toString().substring(0, 1).toUpperCase() +
+                    month.getMonth().toString().substring(1, 3).toLowerCase();
+            monthLabels.add(label);
+
+            int countArr = (int) courriers.stream()
+                    .filter(c ->
+                            c.getType() == TypeCourrier.ARRIVEE
+                                    && c.getDateRegistre() != null
+                                    && c.getDateRegistre().getMonthValue() == month.getMonthValue()
+                                    && c.getDateRegistre().getYear() == month.getYear()
+                    )
+                    .count();
+
+            int countDep = (int) courriers.stream()
+                    .filter(c ->
+                            c.getType() == TypeCourrier.DEPART
+                                    && c.getDateRegistre() != null
+                                    && c.getDateRegistre().getMonthValue() == month.getMonthValue()
+                                    && c.getDateRegistre().getYear() == month.getYear()
+                    )
+                    .count();
+
+            monthlyArrivees.add(countArr);
+            monthlyDeparts.add(countDep);
         }
-        dto.setMonthlyTrend(trendMap);
+
+        dto.setMonthlyLabels(monthLabels);
+        dto.setMonthlyArrivees(monthlyArrivees);
+        dto.setMonthlyDeparts(monthlyDeparts);
 
         return dto;
     }

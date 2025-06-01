@@ -13,6 +13,8 @@ public class AdminBCDashboardDTO {
     private long totalArriveeArchives;
     private long totalDepartArchives;
     private List<Map<String, Object>> last3Courriers;
-    private Map<String, Long> monthlyTrend;
+    private List<String> monthlyLabels;      // e.g. ["Jan", "Feb", ...]
+    private List<Integer> monthlyArrivees;   // counts of ARRIVEE per month
+    private List<Integer> monthlyDeparts;
 }
 

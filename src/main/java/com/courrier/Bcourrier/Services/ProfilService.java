@@ -7,6 +7,7 @@ import com.courrier.Bcourrier.Entities.Employe;
 import com.courrier.Bcourrier.Repositories.EmployeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -52,5 +53,28 @@ public class ProfilService {
         employeRepository.save(e);
         return true;
     }
+
+
+    public PersonalInfoDTO getPersonalInfo(String login) {
+        Employe employe = employeRepository.findByLogin(login)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        PersonalInfoDTO dto = new PersonalInfoDTO();
+        dto.setFullName(employe.getPrenom() + " " + employe.getNom());
+        dto.setEmail(employe.getEmail());
+        dto.setPhone(employe.getTelephone());
+        dto.setDepartment(employe.getService() != null ? employe.getService().getNom() : "");
+        return dto;
+    }
+
+    public PreferencesDTO getPreferences(String login) {
+        Employe employe = employeRepository.findByLogin(login)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        PreferencesDTO dto = new PreferencesDTO();
+        dto.setEmailNotifications(employe.isEmailNotifications());
+        dto.setSmsNotifications(employe.isSmsNotifications());
+        dto.setPushNotifications(employe.isPushNotifications());
+        return dto;
+    }
+
 
 }

@@ -136,37 +136,7 @@ public class AdminBCController {
     }
 
 
-    @PostMapping("/profile/update-personal")
-    public ResponseEntity<String> updatePersonalInfo(
-            @RequestBody PersonalInfoDTO dto,
-            Principal principal) {
-        String login = principal.getName();
-        boolean ok = profilService.updatePersonalInfo(login, dto);
-        return ok ? ResponseEntity.ok("Personal info updated")
-                : ResponseEntity.status(400).body("Failed to update");
-    }
 
-
-
-    @PostMapping("/profile/change-password")
-    public ResponseEntity<String> changePassword(
-            @RequestBody ChangePasswordDTO dto,
-            Principal principal) {
-        String login = principal.getName();
-        boolean ok = profilService.changePassword(login, dto);
-        return ok ? ResponseEntity.ok("Password updated")
-                : ResponseEntity.status(400).body("Current password incorrect");
-    }
-
-    @PostMapping("/profile/update-preferences")
-    public ResponseEntity<String> updatePreferences(
-            @RequestBody PreferencesDTO dto,
-            Principal principal) {
-        String login = principal.getName();
-        boolean ok = profilService.updatePreferences(login, dto);
-        return ok ? ResponseEntity.ok("Preferences updated")
-                : ResponseEntity.status(400).body("Failed to update preferences");
-    }
 
     @GetMapping("/api/courriers/{id}/download")
     public ResponseEntity<org.springframework.core.io.Resource> downloadAttachment(@PathVariable Long id) {
@@ -225,6 +195,8 @@ public class AdminBCController {
         return ok ? ResponseEntity.ok("Courrier mis à jour")
                 : ResponseEntity.status(400).body("Mise à jour échouée");
     }
+
+
 
 
 }

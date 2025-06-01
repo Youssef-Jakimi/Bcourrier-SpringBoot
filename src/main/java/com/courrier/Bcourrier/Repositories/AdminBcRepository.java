@@ -21,11 +21,13 @@ public interface AdminBcRepository extends JpaRepository<Courrier, Long> {
     List<Object[]> countCourriersPerMonthRaw();
 
 
-    default Map<String, Long> countCourriersPerMonth() {
-            Map<String, Long> map = new LinkedHashMap<>();
-            for (Object[] obj : countCourriersPerMonthRaw()) {
-                map.put((String) obj[0], (Long) obj[1]);
-            }
-            return map;
-        }
+    @Query(value =
+            "SELECT " +
+                    "   DATE('month', c.date_registre)         AS month_date, " +
+                    "   COUNT(*)                                     AS courrier_count, " +
+                    "   c.type                                        AS courrier_type " +
+                    "FROM courrier c " +
+                    "GROUP BY month_date, courrier_type " +
+                    "ORDER BY month_date", nativeQuery = true)
+    List<Object[]> countCourriersPerMonthAndTypeRaw();
 }

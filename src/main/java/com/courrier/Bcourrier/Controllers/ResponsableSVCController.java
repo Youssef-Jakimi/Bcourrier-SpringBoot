@@ -75,35 +75,5 @@ public class ResponsableSVCController {
                 : ResponseEntity.status(403).body("Action non autorisée ou courrier introuvable");
     }
 
-    @PostMapping("/profile/update-personal")
-    public ResponseEntity<String> updatePersonalInfo(
-            @RequestBody PersonalInfoDTO dto,
-            Principal principal) {
-        String login = principal.getName();
-        boolean ok = profilService.updatePersonalInfo(login, dto);
-        return ok ? ResponseEntity.ok("Personal info updated")
-                : ResponseEntity.status(400).body("Failed to update");
-    }
 
-
-
-    @PostMapping("/profile/change-password")
-    public ResponseEntity<String> changePassword(
-            @RequestBody ChangePasswordDTO dto,
-            Principal principal) {
-        String login = principal.getName();
-        boolean ok = profilService.changePassword(login, dto);
-        return ok ? ResponseEntity.ok("Password updated")
-                : ResponseEntity.status(400).body("Current password incorrect");
-    }
-
-    @PostMapping("/profile/update-preferences")
-    public ResponseEntity<String> updatePreferences(
-            @RequestBody PreferencesDTO dto,
-            Principal principal) {
-        String login = principal.getName();
-        boolean ok = profilService.updatePreferences(login, dto);
-        return ok ? ResponseEntity.ok("Preferences updated")
-                : ResponseEntity.status(400).body("Failed to update preferences");
-    }
 }
