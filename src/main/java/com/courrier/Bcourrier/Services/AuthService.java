@@ -35,6 +35,12 @@ public class AuthService {
         Employe employe = new Employe();
         employe.setEmail(request.getEmail());
         employe.setLogin(request.getLogin());
+        employe.setCin(request.getCIN());
+        employe.setDateNaissance(request.getDateNaissance());
+        employe.setMatricule(request.getMatricule());
+        employe.setNom(request.getNom());
+        employe.setPrenom(request.getPrenom());
+        employe.setTelephone(request.getTelephone());
         employe.setCheckEmail(false);
         employe.setActive(false);
 

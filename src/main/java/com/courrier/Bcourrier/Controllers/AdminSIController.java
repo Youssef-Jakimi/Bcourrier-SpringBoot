@@ -10,6 +10,7 @@ import com.courrier.Bcourrier.Entities.ServiceIntern;
 import com.courrier.Bcourrier.Entities.Urgence;
 import com.courrier.Bcourrier.Repositories.ServiceInternRepository;
 import com.courrier.Bcourrier.Services.AdminSIService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +19,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin-si")
+@RequiredArgsConstructor
 public class AdminSIController {
 
     @Autowired
     private AdminSIService adminSIService;
-    private ServiceInternRepository serviceInternRepository;
+    private final ServiceInternRepository serviceInternRepository;
 
     @GetMapping("/dashboard")
     public AdminSIDashboardDTO getDashboard() {
