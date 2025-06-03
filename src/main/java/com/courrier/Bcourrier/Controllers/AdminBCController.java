@@ -97,6 +97,7 @@ public class AdminBCController {
             @RequestParam("objet") String objet,
             @RequestParam("nature") String nature,
             @RequestParam("description") String description,
+            @RequestParam("numeroRegistre") int numeroRegistre,
             @RequestParam("degreConfidentialite") Confidentialite degreConfidentialite,
             @RequestParam("urgence") Urgence urgence,
             @RequestParam("service") Long serviceId,
@@ -108,7 +109,8 @@ public class AdminBCController {
 
         try {
             courrierService.enregistrerCourrierDepart(
-                    objet,nature, description, degreConfidentialite, urgence, serviceId, attachment,nomExpediteur, voieExpedition
+                    objet,nature, description, degreConfidentialite, urgence, numeroRegistre,
+                    serviceId, attachment,nomExpediteur, voieExpedition
             );
             return ResponseEntity.ok("Départ enregistré avec succès");
         } catch (Exception e) {

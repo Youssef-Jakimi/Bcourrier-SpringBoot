@@ -11,6 +11,7 @@ import com.courrier.Bcourrier.Entities.ServiceIntern;
 import com.courrier.Bcourrier.Entities.Urgence;
 import com.courrier.Bcourrier.Enums.Role;
 import com.courrier.Bcourrier.Repositories.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -166,6 +167,38 @@ public class AdminSIService {
         if (c.getNom() == null || c.getNom().isBlank()) return false;
         confidentialiteRepository.save(c);
         return true;
+    }
+
+    public void deleteSVCById(Long id) {
+        if (serviceInternRepository.existsById(id)) {
+            serviceInternRepository.deleteById(id);
+        } else {
+            throw new EntityNotFoundException("ServiceIntern with ID " + id + " not found.");
+        }
+    }
+
+    public void deleteURGById(Long id) {
+        if (urgenceRepository.existsById(id)) {
+            urgenceRepository.deleteById(id);
+        } else {
+            throw new EntityNotFoundException("ServiceIntern with ID " + id + " not found.");
+        }
+    }
+
+    public void deleteROLEById(Long id) {
+        if (roleRepository.existsById(id)) {
+            roleRepository.deleteById(id);
+        } else {
+            throw new EntityNotFoundException("ServiceIntern with ID " + id + " not found.");
+        }
+    }
+
+    public void deleteCONFById(Long id) {
+        if (confidentialiteRepository.existsById(id)) {
+            confidentialiteRepository.deleteById(id);
+        } else {
+            throw new EntityNotFoundException("ServiceIntern with ID " + id + " not found.");
+        }
     }
 
 

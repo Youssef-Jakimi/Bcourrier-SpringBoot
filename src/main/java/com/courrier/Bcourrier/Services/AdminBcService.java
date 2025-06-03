@@ -91,8 +91,8 @@ public class AdminBcService {
         LocalDate now = LocalDate.now(); // system default zone (Africa/Casablanca in your setup)
 
         // Loop from (now.minusMonths(6)) up to current month: total of 7 months.
-        for (int i = 0; i < 7; i++) {
-            LocalDate month = now.minusMonths(6 - i);
+        for (int i = 0; i < 12; i++) {
+            LocalDate month = now.minusMonths(11 - i);
             // Label = first three letters with initial uppercase, e.g. "Jan", "Feb"
             String label = month.getMonth().toString().substring(0, 1).toUpperCase() +
                     month.getMonth().toString().substring(1, 3).toLowerCase();
@@ -176,6 +176,7 @@ public class AdminBcService {
             String description,
             Confidentialite degreConfidentialite,
             Urgence urgence,
+            int numeroRegistre,
             Long serviceId,
             MultipartFile attachment,
             String nomExpediteur,
@@ -200,6 +201,7 @@ public class AdminBcService {
         courrier.setDescription(description);
         courrier.setDegreConfiden(degreConfidentialite);
         courrier.setUrgence(urgence);
+        courrier.setNumeroRegistre(numeroRegistre);
         courrier.setAttachmentPath(filePath);
         courrier.setService(serviceOpt.get());
         courrier.setType(TypeCourrier.DEPART);

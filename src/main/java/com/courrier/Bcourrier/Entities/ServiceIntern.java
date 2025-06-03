@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
@@ -21,7 +22,7 @@ public class ServiceIntern {
     private String nom;
 
     @Column(name = "dateCreation", nullable = false)
-    private Date dateCreation;
+    private Timestamp dateCreation;
 
     // Getters and Setters
 }

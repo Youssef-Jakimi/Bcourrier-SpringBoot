@@ -8,7 +8,10 @@ import com.courrier.Bcourrier.Entities.Confidentialité;
 import com.courrier.Bcourrier.Entities.Role;
 import com.courrier.Bcourrier.Entities.ServiceIntern;
 import com.courrier.Bcourrier.Entities.Urgence;
+import com.courrier.Bcourrier.Repositories.ConfidentialitéRepository;
+import com.courrier.Bcourrier.Repositories.RoleRepository;
 import com.courrier.Bcourrier.Repositories.ServiceInternRepository;
+import com.courrier.Bcourrier.Repositories.UrgenceRepository;
 import com.courrier.Bcourrier.Services.AdminSIService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,9 @@ public class AdminSIController {
     @Autowired
     private AdminSIService adminSIService;
     private final ServiceInternRepository serviceInternRepository;
+    private final ConfidentialitéRepository confidentialiteRepository;
+    private final RoleRepository roleRepository;
+    private final UrgenceRepository UrgenceRepository;
 
     @GetMapping("/dashboard")
     public AdminSIDashboardDTO getDashboard() {
@@ -102,6 +108,30 @@ public class AdminSIController {
         boolean ok = adminSIService.addConfidentialite(c);
         return ok ? ResponseEntity.ok("Confidentialité ajoutée")
                 : ResponseEntity.status(400).body("Erreur ajout confidentialité");
+    }
+
+    @DeleteMapping("/service/{id}")
+    public ResponseEntity<?> deleteServiceIntern(@PathVariable Long id) {
+        serviceInternRepository.deleteById(id);
+        return ResponseEntity.ok().body("Deleted successfully");
+    }
+
+    @DeleteMapping("/delete/urgence/{id}")
+    public ResponseEntity<?> deleteurgence(@PathVariable Long id) {
+        UrgenceRepository.deleteById(id);
+        return ResponseEntity.ok().body("Deleted successfully");
+    }
+
+    @DeleteMapping("/delete/role/{id}")
+    public ResponseEntity<?> deleterole(@PathVariable Long id) {
+        roleRepository.deleteById(id);
+        return ResponseEntity.ok().body("Deleted successfully");
+    }
+
+    @DeleteMapping("/delete/confidentialite/{id}")
+    public ResponseEntity<?> deleteconf(@PathVariable Long id) {
+        confidentialiteRepository.deleteById(id);
+        return ResponseEntity.ok().body("Deleted successfully");
     }
 
 

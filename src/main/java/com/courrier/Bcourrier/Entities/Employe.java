@@ -47,7 +47,7 @@ public class Employe {
                 private String cin;
 
                 @Column(name = "dateNaissance", nullable = true)
-                private Date dateNaissance;
+                private LocalDate dateNaissance;
 
                 @ManyToOne
                 @JoinColumn(name = "service", referencedColumnName = "id")

@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface EmployeRepository extends JpaRepository<Employe, Long> {
     // Used in /verify endpoint
     Optional<Employe> findByVerificationToken(String token);
+    Optional<Employe> findByEmail(String email);
 
     // You will use this in your login logic later
     Optional<Employe> findByLogin(String login);
