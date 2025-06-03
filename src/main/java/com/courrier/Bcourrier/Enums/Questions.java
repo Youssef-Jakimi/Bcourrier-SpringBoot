@@ -1,4 +1,4 @@
 package com.courrier.Bcourrier.Enums;
 
-public enum QuestionSecurite {
+public enum Questions {
 }
