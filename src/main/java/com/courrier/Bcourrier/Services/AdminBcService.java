@@ -182,6 +182,7 @@ public class AdminBcService {
             String nomExpediteur,
             VoieExpedition voieExpedition
     ) throws IOException {
+        LocalDate today = LocalDate.now();
 
         Optional<ServiceIntern> serviceOpt = serviceInternRepository.findById(serviceId);
         if (serviceOpt.isEmpty()) {
@@ -201,6 +202,7 @@ public class AdminBcService {
         courrier.setDescription(description);
         courrier.setDegreConfiden(degreConfidentialite);
         courrier.setUrgence(urgence);
+        courrier.setDateRegistre(today);
         courrier.setNumeroRegistre(numeroRegistre);
         courrier.setAttachmentPath(filePath);
         courrier.setService(serviceOpt.get());
