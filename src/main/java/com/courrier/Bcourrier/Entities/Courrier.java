@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -44,7 +45,7 @@ public class Courrier {
     private int numeroRegistre;
 
     @Column(name = "date_Registre", nullable = true)
-    private LocalDate dateRegistre;
+    private Timestamp dateRegistre;
 
     @Column(name = "signataire", nullable = true)
     private String signataire;
