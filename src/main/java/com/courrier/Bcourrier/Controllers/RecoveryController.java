@@ -39,7 +39,7 @@ public class RecoveryController {
 
         // Generate dummy token or UUID (store in DB if needed)
         String token = UUID.randomUUID().toString();
-        String recoveryLink = "http://localhost:9090/reset-password?token=" + token;
+        String recoveryLink = "http://localhost:4200/change-password?token=" + token;
 
         // Save token if you want to check later
         employe.setVerificationToken(token);
