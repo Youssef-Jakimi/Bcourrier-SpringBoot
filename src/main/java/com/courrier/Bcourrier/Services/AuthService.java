@@ -48,7 +48,7 @@ public class AuthService {
         employe.setVerificationToken(token);
         employeRepository.save(employe);
 
-        String verificationLink = "http://localhost:4200/verify?token=" + token;
+        String verificationLink = "http://localhost:4200/questions?token=" + token;
         emailService.sendVerificationEmail(employe.getEmail(), verificationLink);
     }
 
