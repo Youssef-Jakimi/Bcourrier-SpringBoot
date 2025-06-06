@@ -1,5 +1,6 @@
 package com.courrier.Bcourrier.Controllers;
 
+import com.courrier.Bcourrier.DTO.PasswordResetRequest;
 import com.courrier.Bcourrier.Entities.Employe;
 import com.courrier.Bcourrier.Enums.Questions;
 import com.courrier.Bcourrier.Repositories.EmployeRepository;
@@ -56,10 +57,10 @@ public class RecoveryController {
 
 
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(
-            @RequestParam String token,
-            @RequestParam String newPassword
-    ) {
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest request) {
+        String token = request.getToken();
+        String newPassword = request.getNewPassword();
+
         Optional<Employe> optional = employeRepository.findByVerificationToken(token);
         if (optional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token.");
