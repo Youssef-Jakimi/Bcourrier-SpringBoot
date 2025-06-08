@@ -18,8 +18,6 @@ public interface EmployeRepository extends JpaRepository<Employe, Long> {
     long countByActiveFalse(); // or countByCheckEmailFalse() based on your logic
     List<Employe> findByActiveTrue();
     List<Employe> findByActiveFalse();
-    @Override
-    List<Employe> findAll();
 
 
     // Optional: to avoid duplicates

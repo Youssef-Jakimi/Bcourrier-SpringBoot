@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CourrierRepository extends JpaRepository<Courrier, Long> {
     List<Courrier> findByType(TypeCourrier type);
-
+    List<Courrier> findByService(ServiceIntern serviceIntern);
     long countByArchiverTrue();
     long countByDateTraitementNotNull();
     long countByDateTraitementNull();

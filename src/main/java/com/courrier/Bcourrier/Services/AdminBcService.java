@@ -1,9 +1,7 @@
 package com.courrier.Bcourrier.Services;
 
 import com.courrier.Bcourrier.DTO.AdminBC.*;
-import com.courrier.Bcourrier.Entities.Courrier;
-import com.courrier.Bcourrier.Entities.Depart;
-import com.courrier.Bcourrier.Entities.ServiceIntern;
+import com.courrier.Bcourrier.Entities.*;
 import com.courrier.Bcourrier.Enums.Confidentialite;
 import com.courrier.Bcourrier.Enums.TypeCourrier;
 import com.courrier.Bcourrier.Enums.Urgence;
@@ -32,6 +30,8 @@ public class AdminBcService {
     private final AdminBcRepository adminBcRepository;
     private final EmployeRepository employeRepository;
     private final UrgenceRepository urgenceRepository;
+    private final AffectationCourrierServiceRepository affectationCourrierServiceRepository;
+    private final AffectationCourrierEmployeRepository affectationCourrierEmployeRepository;
     private final ConfidentialitéRepository confidentialiteRepository;
     @Autowired
     private final DepartRepository departRepository;
@@ -164,8 +164,15 @@ public class AdminBcService {
         courrier.setAttachmentPath(filePath);
         courrier.setService(service.get());
 
-        System.out.println("About to save: " + courrier);
-        courrierRepository.save(courrier);
+        // 👇 Now create the affectation entry
+        AffectationCourrierService affectation = new AffectationCourrierService();
+        affectation.setCourrier(courrier);
+        affectation.setService(serviceInternRepository.findById(serviceId).orElseThrow());
+        affectation.setDateAffection(today);
+        affectation.setHeureAffectation(LocalTime.now().toString());
+        affectation.setTypeAffectation("Automatique");
+
+        affectationCourrierServiceRepository.save(affectation);        courrierRepository.save(courrier);
         System.out.println("Saved courrier");
     }
 
@@ -177,12 +184,14 @@ public class AdminBcService {
             Confidentialite degreConfidentialite,
             Urgence urgence,
             int numeroRegistre,
+            Long employeId,
             Long serviceId,
             MultipartFile attachment,
             String nomExpediteur,
             VoieExpedition voieExpedition
     ) throws IOException {
         LocalDate today = LocalDate.now();
+        Optional<Employe> employe = employeRepository.findById(employeId);
 
         Optional<ServiceIntern> serviceOpt = serviceInternRepository.findById(serviceId);
         if (serviceOpt.isEmpty()) {
@@ -202,6 +211,7 @@ public class AdminBcService {
         courrier.setDescription(description);
         courrier.setDegreConfiden(degreConfidentialite);
         courrier.setUrgence(urgence);
+        courrier.setEmploye(employe.get());
         courrier.setDateRegistre(today);
         courrier.setNumeroRegistre(numeroRegistre);
         courrier.setAttachmentPath(filePath);
@@ -214,6 +224,61 @@ public class AdminBcService {
         depart.setVoieExpedition(voieExpedition);
         depart.setCourrier(courrier);
         departRepository.save(depart);
+
+        // 👇 Now create the affectation entry
+        AffectationCourrierService affectation = new AffectationCourrierService();
+        affectation.setCourrier(courrier);
+        affectation.setService(serviceInternRepository.findById(serviceId).orElseThrow());
+        affectation.setDateAffection(today);
+        affectation.setHeureAffectation(LocalTime.now().toString());
+        affectation.setTypeAffectation("Automatique");
+
+        affectationCourrierServiceRepository.save(affectation);
+    }
+
+    public void enregistrerCourrierEmploye(
+            String objet,
+            String description,
+            int numeroRegistre,
+            Long employeId,
+            Long serviceId,
+            MultipartFile attachment
+    ) throws IOException {
+        LocalDate today = LocalDate.now();
+        Optional<Employe> employe = employeRepository.findById(employeId);
+
+        Optional<ServiceIntern> serviceOpt = serviceInternRepository.findById(serviceId);
+        if (serviceOpt.isEmpty()) {
+            throw new IllegalArgumentException("Service cible introuvable");
+        }
+
+        String uploadsDir = "./uploads/courriers"; // No leading slash
+        String originalFilename = StringUtils.cleanPath(attachment.getOriginalFilename());
+        String filePath = uploadsDir + UUID.randomUUID() + "_" + originalFilename;
+        Path path = Paths.get(filePath);
+        Files.createDirectories(path.getParent());
+        Files.copy(attachment.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+        Courrier courrier = new Courrier();
+        courrier.setObject(objet);
+        courrier.setDescription(description);
+        courrier.setEmploye(employe.get());
+        courrier.setDateRegistre(today);
+        courrier.setNumeroRegistre(numeroRegistre);
+        courrier.setAttachmentPath(filePath);
+        courrier.setService(serviceOpt.get());
+        courrier.setType(TypeCourrier.EMPLOYE);
+        courrierRepository.save(courrier);
+
+        // 👇 Now create the affectation entry
+        AffectationCourrierEmploye affectation = new AffectationCourrierEmploye();
+        affectation.setCourrier(courrier);
+        affectation.setEmploye(employeRepository.findById(employeId).orElseThrow());
+        affectation.setDateAffection(today);
+        affectation.setHeureAffectation(LocalTime.now().toString());
+        affectation.setTypeAffectation("Automatique");
+
+        affectationCourrierEmployeRepository.save(affectation);
     }
 
     public CourrierArriveeResponseDTO getAllArriveeCourrierDTOs() {

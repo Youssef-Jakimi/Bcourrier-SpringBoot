@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
@@ -35,11 +36,13 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.stream.Collectors;
 
 @Data
 @RestController
 @RequestMapping("/api/admin-bc")
 @RequiredArgsConstructor
+
 public class AdminBCController {
     @Autowired
     private final AdminBcService courrierService;
@@ -48,6 +51,7 @@ public class AdminBCController {
     private final UrgenceRepository urgenceRepository;
     private final ConfidentialitéRepository confidentialitéRepository;
     private final ProfilService profilService;
+    private final EmployeRepository employeRepository;
     private final AdminBcRepository adminBcRepository;
     private final CourrierRepository courrierRepository;
 
@@ -82,15 +86,48 @@ public class AdminBCController {
         }
     }
 
-    @GetMapping(value = {"/admin/courriers/arrivee", "/admin/courriers/depart"})
+    @GetMapping(value = {"/admin/courriers/arrivee", "/admin/courriers/depart", "/courrier/employe"})
     public AjouterDTO getStaticOptions() {
         AjouterDTO dto = new AjouterDTO();
+
         dto.setUrgences(urgenceRepository.findAll());
         dto.setConfidentialites(confidentialitéRepository.findAll());
         dto.setServices(serviceInternRepository.findAll());
+
+        List<EmployeDTO> employeDTOs = employeRepository.findAll().stream()
+                .map(e -> new EmployeDTO(e.getId(), e.getNom(), e.getPrenom()))
+                .collect(Collectors.toList());
+
+        dto.setEmployes(employeDTOs);
+
         return dto;
     }
 
+    @PostMapping("/courrier/employe")
+    public ResponseEntity<String> enregistrerCourrierEmploye(
+            @RequestParam("objet") String objet,
+            @RequestParam("description") String description,
+            @RequestParam("numeroRegistre") int numeroRegistre,
+            @RequestParam("employeId") Long employeId,
+            @RequestParam("serviceId") Long serviceId,
+            @RequestParam("attachment") MultipartFile attachment
+    ) {
+        try {
+            adminBcService.enregistrerCourrierEmploye(
+                    objet,
+                    description,
+                    numeroRegistre,
+                    employeId,
+                    serviceId,
+                    attachment
+            );
+            return ResponseEntity.ok("Courrier enregistré avec succès.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Erreur: " + e.getMessage());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l’enregistrement du fichier.");
+        }
+    }
 
     @PostMapping("/admin/courriers/depart")
     public ResponseEntity<String> enregistrerCourrierDepart(
@@ -101,6 +138,7 @@ public class AdminBCController {
             @RequestParam("degreConfidentialite") Confidentialite degreConfidentialite,
             @RequestParam("urgence") Urgence urgence,
             @RequestParam("service") Long serviceId,
+            @RequestParam("employe") Long employeId,
             @RequestParam("attachment") MultipartFile attachment,
             @RequestParam("nomExpediteur") String nomExpediteur,
             @RequestParam("voieExpedition") VoieExpedition voieExpedition
@@ -109,7 +147,7 @@ public class AdminBCController {
 
         try {
             courrierService.enregistrerCourrierDepart(
-                    objet,nature, description, degreConfidentialite, urgence, numeroRegistre,
+                    objet,nature, description, degreConfidentialite, urgence, numeroRegistre,employeId,
                     serviceId, attachment,nomExpediteur, voieExpedition
             );
             return ResponseEntity.ok("Départ enregistré avec succès");

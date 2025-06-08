@@ -2,6 +2,7 @@ package com.courrier.Bcourrier.Entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -14,13 +15,13 @@ public class AffectationCourrierEmploye {
     private int id;
 
     @Column(name = "dateAffection", nullable = false)
-    private Date dateAffection;
+    private LocalDate dateAffection;
 
     @Column(name = "heureAffectation", nullable = false)
     private String heureAffectation;
 
     @Column(name = "dateFinExecution", nullable = false)
-    private Date dateFinExecution;
+    private LocalDate dateFinExecution;
 
     @Column(name = "instruction", nullable = false)
     private String instruction;
@@ -29,7 +30,7 @@ public class AffectationCourrierEmploye {
     private String typeAffectation;
 
     @Column(name = "date_consultation", nullable = false)
-    private Date dateConsultation;
+    private LocalDate dateConsultation;
 
     @Column(name = "heure_consultation", nullable = false)
     private String heureConsultation;

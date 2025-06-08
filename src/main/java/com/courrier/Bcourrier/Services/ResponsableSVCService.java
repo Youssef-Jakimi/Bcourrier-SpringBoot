@@ -13,6 +13,9 @@ import com.courrier.Bcourrier.Repositories.CourrierRepository;
 import com.courrier.Bcourrier.Repositories.EmployeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,16 +33,58 @@ public class ResponsableSVCService {
         return responsable.getService();
     }
 
-    // DASHBOARD BRIEF
     public DashboardSVCDTO getDashboardBrief(String login) {
         ServiceIntern svc = getCurrentResponsableService(login);
         DashboardSVCDTO dto = new DashboardSVCDTO();
+
+        // Basic counts
         dto.setArriveeEnCours(courrierRepository.countByServiceAndTypeAndArchiverFalse(svc, TypeCourrier.ARRIVEE));
         dto.setArriveeArchive(courrierRepository.countByServiceAndTypeAndArchiverTrue(svc, TypeCourrier.ARRIVEE));
         dto.setDepartEnCours(courrierRepository.countByServiceAndTypeAndArchiverFalse(svc, TypeCourrier.DEPART));
         dto.setDepartArchive(courrierRepository.countByServiceAndTypeAndArchiverTrue(svc, TypeCourrier.DEPART));
+
+        // Graph data
+        List<Courrier> courriers = courrierRepository.findByService(svc);
+
+        List<String> monthLabels = new ArrayList<>();
+        List<Integer> monthlyArrivees = new ArrayList<>();
+        List<Integer> monthlyDeparts = new ArrayList<>();
+
+        LocalDate now = LocalDate.now();
+
+        for (int i = 0; i < 12; i++) {
+            LocalDate month = now.minusMonths(11 - i);
+            String label = month.getMonth().toString().substring(0, 1).toUpperCase() +
+                    month.getMonth().toString().substring(1, 3).toLowerCase();
+            monthLabels.add(label);
+
+            int countArr = (int) courriers.stream()
+                    .filter(c ->
+                            c.getType() == TypeCourrier.ARRIVEE &&
+                                    c.getDateRegistre() != null &&
+                                    c.getDateRegistre().getMonthValue() == month.getMonthValue() &&
+                                    c.getDateRegistre().getYear() == month.getYear()
+                    ).count();
+
+            int countDep = (int) courriers.stream()
+                    .filter(c ->
+                            c.getType() == TypeCourrier.DEPART &&
+                                    c.getDateRegistre() != null &&
+                                    c.getDateRegistre().getMonthValue() == month.getMonthValue() &&
+                                    c.getDateRegistre().getYear() == month.getYear()
+                    ).count();
+
+            monthlyArrivees.add(countArr);
+            monthlyDeparts.add(countDep);
+        }
+
+        dto.setMonthlyLabels(monthLabels);
+        dto.setMonthlyArrivees(monthlyArrivees);
+        dto.setMonthlyDeparts(monthlyDeparts);
+
         return dto;
     }
+
 
     // LIST ARRIVEE EN COURS
     public List<CourrierSimpleDTO> getArriveeEnCours(String login) {
@@ -101,6 +146,9 @@ public class ResponsableSVCService {
         StatutCourrier newStatut = StatutCourrier.valueOf(dto.getNewStatus());
         courrier.setStatutCourrier(newStatut);
 
+         if (newStatut == StatutCourrier.TRAITE) {
+            courrier.setArchiver(true);
+        }
         // If status is RETOUR, set service and employe to null
         if (newStatut == StatutCourrier.RETOURE) {
             courrier.setService(null);
