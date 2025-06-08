@@ -184,14 +184,12 @@ public class AdminBcService {
             Confidentialite degreConfidentialite,
             Urgence urgence,
             int numeroRegistre,
-            Long employeId,
             Long serviceId,
             MultipartFile attachment,
             String nomExpediteur,
             VoieExpedition voieExpedition
     ) throws IOException {
         LocalDate today = LocalDate.now();
-        Optional<Employe> employe = employeRepository.findById(employeId);
 
         Optional<ServiceIntern> serviceOpt = serviceInternRepository.findById(serviceId);
         if (serviceOpt.isEmpty()) {
@@ -211,7 +209,6 @@ public class AdminBcService {
         courrier.setDescription(description);
         courrier.setDegreConfiden(degreConfidentialite);
         courrier.setUrgence(urgence);
-        courrier.setEmploye(employe.get());
         courrier.setDateRegistre(today);
         courrier.setNumeroRegistre(numeroRegistre);
         courrier.setAttachmentPath(filePath);
