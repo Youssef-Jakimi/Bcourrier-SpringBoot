@@ -14,10 +14,10 @@ public class AffectationService {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private int id;
 
-        @Column(name = "date_Affectation", nullable = false)
+        @Column(name = "date_Affectation", nullable = true)
         private Date dateAffectation;
 
-        @Column(name = "date_FinAffectation", nullable = false)
+        @Column(name = "date_FinAffectation", nullable = true)
         private Date dateFinAffectation;
 
         @ManyToOne

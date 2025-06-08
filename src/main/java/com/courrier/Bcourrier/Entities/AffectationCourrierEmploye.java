@@ -14,25 +14,25 @@ public class AffectationCourrierEmploye {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "dateAffection", nullable = false)
+    @Column(name = "dateAffection", nullable = true)
     private LocalDate dateAffection;
 
-    @Column(name = "heureAffectation", nullable = false)
+    @Column(name = "heureAffectation", nullable = true)
     private String heureAffectation;
 
-    @Column(name = "dateFinExecution", nullable = false)
+    @Column(name = "dateFinExecution", nullable = true)
     private LocalDate dateFinExecution;
 
-    @Column(name = "instruction", nullable = false)
+    @Column(name = "instruction", nullable = true)
     private String instruction;
 
-    @Column(name = "type_affectation", nullable = false)
+    @Column(name = "type_affectation", nullable = true)
     private String typeAffectation;
 
-    @Column(name = "date_consultation", nullable = false)
+    @Column(name = "date_consultation", nullable = true)
     private LocalDate dateConsultation;
 
-    @Column(name = "heure_consultation", nullable = false)
+    @Column(name = "heure_consultation", nullable = true)
     private String heureConsultation;
 
     @ManyToOne

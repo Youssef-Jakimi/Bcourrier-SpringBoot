@@ -163,6 +163,7 @@ public class AdminBcService {
         courrier.setType(TypeCourrier.ARRIVEE);
         courrier.setAttachmentPath(filePath);
         courrier.setService(service.get());
+        courrierRepository.save(courrier);
 
         // 👇 Now create the affectation entry
         AffectationCourrierService affectation = new AffectationCourrierService();
@@ -172,7 +173,7 @@ public class AdminBcService {
         affectation.setHeureAffectation(LocalTime.now().toString());
         affectation.setTypeAffectation("Automatique");
 
-        affectationCourrierServiceRepository.save(affectation);        courrierRepository.save(courrier);
+        affectationCourrierServiceRepository.save(affectation);
         System.out.println("Saved courrier");
     }
 
