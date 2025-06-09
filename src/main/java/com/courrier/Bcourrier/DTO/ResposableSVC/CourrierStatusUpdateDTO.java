@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class CourrierStatusUpdateDTO {
-    private Long courrierId;
+    private int courrierId;
     private String newStatus;
 }
 

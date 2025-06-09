@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface CourrierRepository extends JpaRepository<Courrier, Long> {
+public interface CourrierRepository extends JpaRepository<Courrier, Integer> {
     List<Courrier> findByType(TypeCourrier type);
     List<Courrier> findByService(ServiceIntern serviceIntern);
     long countByArchiverTrue();

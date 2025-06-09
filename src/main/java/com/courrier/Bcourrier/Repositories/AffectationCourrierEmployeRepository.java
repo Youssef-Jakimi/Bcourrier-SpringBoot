@@ -5,8 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface AffectationCourrierEmployeRepository extends JpaRepository<AffectationCourrierEmploye, Long> {
+public interface AffectationCourrierEmployeRepository extends JpaRepository<AffectationCourrierEmploye, Integer> {
     List<AffectationCourrierEmploye> findByCourrier_ArchiverTrue();
-    boolean existsByCourrier_Id(Long courrierId);
+    boolean existsByCourrier_Id(int courrierId);
 
 }

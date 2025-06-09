@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class AdminBCUpdateCourrierDTO {
-    private Long courrierId;
+    private int courrierId;
     private Long serviceId;
     private String urgence;           // e.g., "URGENT", "NORMAL"
     private String confidentialite;   // e.g., "SECRET", "ROUTINE"

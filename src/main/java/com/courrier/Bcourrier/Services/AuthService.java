@@ -7,6 +7,7 @@ import com.courrier.Bcourrier.Entities.Employe;
 import com.courrier.Bcourrier.Repositories.EmployeRepository;
 import com.courrier.Bcourrier.config.JwtUtil;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,17 +20,18 @@ import java.util.Optional;
 import java.util.UUID;
 @Getter
 @Setter
+@RequiredArgsConstructor
 @Service
 public class AuthService {
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private EmailService emailService;
+    private final EmailService emailService;
 
     @Autowired
-    private EmployeRepository employeRepository;
+    private final EmployeRepository employeRepository;
 
     public void registerUser(RegisterRequest request) {
         Employe employe = new Employe();

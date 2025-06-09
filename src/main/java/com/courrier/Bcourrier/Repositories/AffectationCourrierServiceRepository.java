@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface AffectationCourrierServiceRepository extends JpaRepository<AffectationCourrierService, Long> {
     List<AffectationCourrierService> findByCourrier_Type(TypeCourrier type);
+    AffectationCourrierService findByCourrier_id(int id);
+
 }

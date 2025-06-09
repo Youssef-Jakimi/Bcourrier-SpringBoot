@@ -12,7 +12,9 @@ import com.courrier.Bcourrier.Entities.Urgence;
 import com.courrier.Bcourrier.Enums.Role;
 import com.courrier.Bcourrier.Repositories.*;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,21 +24,22 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class AdminSIService {
 
     @Autowired
-    private EmployeRepository employeRepository;
+    private final EmployeRepository employeRepository;
 
     @Autowired
-    private UrgenceRepository urgenceRepository;
+    private final  UrgenceRepository urgenceRepository;
 
     @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    private ConfidentialitéRepository confidentialiteRepository;
+    private final ConfidentialitéRepository confidentialiteRepository;
     @Autowired
-    private ServiceInternRepository serviceInternRepository;
+    private final ServiceInternRepository serviceInternRepository;
 
 
     public AdminSIDashboardDTO getDashboardData() {

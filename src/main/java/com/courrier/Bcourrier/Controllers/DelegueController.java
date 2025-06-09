@@ -46,7 +46,7 @@ public class DelegueController {
         return ResponseEntity.ok(delegueService.getAllArriveeCourrierDTOs());
     }
     @GetMapping("/api/courriers/{id}/download")
-    public ResponseEntity<org.springframework.core.io.Resource> downloadAttachment(@PathVariable Long id) {
+    public ResponseEntity<org.springframework.core.io.Resource> downloadAttachment(@PathVariable int id) {
         Courrier courrier = courrierRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         String attachmentPath = courrier.getAttachmentPath();
@@ -71,7 +71,7 @@ public class DelegueController {
     }
 
     @GetMapping("/api/courriers/{id}/view-pdf")
-    public ResponseEntity<Resource> viewPdfInline(@PathVariable Long id) {
+    public ResponseEntity<Resource> viewPdfInline(@PathVariable int id) {
         Courrier courrier = courrierRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         String attachmentPath = courrier.getAttachmentPath();

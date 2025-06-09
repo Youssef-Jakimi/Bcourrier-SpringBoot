@@ -66,7 +66,7 @@ public class RHController {
     private AffectationCourrierEmployeRepository affectationCourrierEmployeRepository;
 
     @GetMapping("/api/courriers/{id}/download")
-    public ResponseEntity<org.springframework.core.io.Resource> downloadAttachment(@PathVariable Long id) {
+    public ResponseEntity<org.springframework.core.io.Resource> downloadAttachment(@PathVariable int id) {
         // Check if this courrier is linked to an employee (personnel)
         boolean isPersonnel = affectationCourrierEmployeRepository.existsByCourrier_Id(id);
         if (!isPersonnel) {
@@ -101,7 +101,7 @@ public class RHController {
     // 3. (Optional) See courrier details
 
     @GetMapping("/api/courriers/{id}/view-pdf")
-    public ResponseEntity<org.springframework.core.io.Resource> viewPdfInline(@PathVariable Long id) {
+    public ResponseEntity<org.springframework.core.io.Resource> viewPdfInline(@PathVariable int id) {
         // Only allow if courrier is linked to an employee
         boolean isPersonnel = affectationCourrierEmployeRepository.existsByCourrier_Id(id);
         if (!isPersonnel) {

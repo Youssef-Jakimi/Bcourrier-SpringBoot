@@ -28,9 +28,9 @@ public class DelegueService {
     @Autowired
     private final DepartRepository departRepository;
     @Autowired
-    private CourrierRepository courrierRepository;
+    private final CourrierRepository courrierRepository;
     @Autowired
-    private ServiceInternRepository serviceInternRepository;
+    private final ServiceInternRepository serviceInternRepository;
 
     public AdminBCDashboardDTO getAdminDashboardData() {
         AdminBCDashboardDTO dto = new AdminBCDashboardDTO();
