@@ -8,6 +8,7 @@ import com.courrier.Bcourrier.Entities.Courrier;
 import com.courrier.Bcourrier.Entities.Employe;
 import com.courrier.Bcourrier.Entities.ServiceIntern;
 import com.courrier.Bcourrier.Enums.Confidentialite;
+import com.courrier.Bcourrier.Enums.TypeCourrier;
 import com.courrier.Bcourrier.Enums.Urgence;
 import com.courrier.Bcourrier.Enums.VoieExpedition;
 import com.courrier.Bcourrier.Repositories.*;
@@ -102,6 +103,20 @@ public class AdminBCController {
 
         return dto;
     }
+    @GetMapping("/consulter-courrier/employe")
+    public List<ConsulterCourrierEmployeDTO> getCourrierEmploye() {
+        List<Courrier> courriers = courrierRepository.findByType(TypeCourrier.EMPLOYE);
+
+        return courriers.stream()
+                .map(c -> new ConsulterCourrierEmployeDTO(
+                        c.getDateRegistre(),
+                        c.getObject(),
+                        c.getEmploye().getNom(),
+                        c.getEmploye().getCin()
+                ))
+                .collect(Collectors.toList());
+    }
+
 
     @PostMapping("/courrier/employe")
     public ResponseEntity<String> enregistrerCourrierEmploye(
