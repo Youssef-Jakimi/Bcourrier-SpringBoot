@@ -140,9 +140,11 @@ public class RHController {
 
         return courriers.stream()
                 .map(c -> new ConsulterCourrierEmployeDTO(
+                        c.getId(),
                         c.getDateRegistre(),
                         c.getObject(),
                         c.getEmploye().getNom(),
+                        c.getEmploye().getPrenom(),
                         c.getEmploye().getCin()
                 ))
                 .collect(Collectors.toList());

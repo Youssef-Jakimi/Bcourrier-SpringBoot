@@ -239,16 +239,10 @@ public class AdminBcService {
             String description,
             int numeroRegistre,
             Long employeId,
-            Long serviceId,
             MultipartFile attachment
     ) throws IOException {
         LocalDate today = LocalDate.now();
         Optional<Employe> employe = employeRepository.findById(employeId);
-
-        Optional<ServiceIntern> serviceOpt = serviceInternRepository.findById(serviceId);
-        if (serviceOpt.isEmpty()) {
-            throw new IllegalArgumentException("Service cible introuvable");
-        }
 
         String uploadsDir = "./uploads/courriers"; // No leading slash
         String originalFilename = StringUtils.cleanPath(attachment.getOriginalFilename());
@@ -264,7 +258,6 @@ public class AdminBcService {
         courrier.setDateRegistre(today);
         courrier.setNumeroRegistre(numeroRegistre);
         courrier.setAttachmentPath(filePath);
-        courrier.setService(serviceOpt.get());
         courrier.setType(TypeCourrier.EMPLOYE);
         courrierRepository.save(courrier);
 

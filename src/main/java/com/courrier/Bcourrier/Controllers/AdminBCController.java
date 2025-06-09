@@ -109,9 +109,11 @@ public class AdminBCController {
 
         return courriers.stream()
                 .map(c -> new ConsulterCourrierEmployeDTO(
+                        c.getId(),
                         c.getDateRegistre(),
                         c.getObject(),
                         c.getEmploye().getNom(),
+                        c.getEmploye().getPrenom(),
                         c.getEmploye().getCin()
                 ))
                 .collect(Collectors.toList());
@@ -124,7 +126,6 @@ public class AdminBCController {
             @RequestParam("description") String description,
             @RequestParam("numeroRegistre") int numeroRegistre,
             @RequestParam("employeId") Long employeId,
-            @RequestParam("serviceId") Long serviceId,
             @RequestParam("attachment") MultipartFile attachment
     ) {
         try {
@@ -133,7 +134,6 @@ public class AdminBCController {
                     description,
                     numeroRegistre,
                     employeId,
-                    serviceId,
                     attachment
             );
             return ResponseEntity.ok("Courrier enregistré avec succès.");
