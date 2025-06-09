@@ -255,6 +255,7 @@ public class ResponsableSVCService {
 
          if (newStatut == StatutCourrier.TRAITE) {
              courriersvc.setDateFinExecution(LocalDate.now());
+             courrier.setDateTraitement(LocalDate.now());
              courrier.setArchiver(true);
         }
         if (newStatut == StatutCourrier.EN_COURS) {

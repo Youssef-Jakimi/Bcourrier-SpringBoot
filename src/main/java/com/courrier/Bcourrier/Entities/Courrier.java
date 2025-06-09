@@ -37,7 +37,7 @@ public class Courrier {
     private LocalDate dateArrive;
 
     @Column(name = "date_Traitement", nullable = true)
-    private Date dateTraitement;
+    private LocalDate dateTraitement;
 
 
     @Column(name = "numero_Registre", nullable = true)

@@ -262,7 +262,7 @@ public class DelegueService {
                 .filter(c -> c.getDateArrive().isAfter(limit) || c.getDateArrive().isEqual(limit))
                 .map(c -> {
                     LocalDate arrive = c.getDateArrive();
-                    LocalDate traite = c.getDateTraitement().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDate traite = c.getDateTraitement();
                     return (long) Period.between(arrive, traite).getDays();
                 })
                 .filter(j -> j >= 0)
