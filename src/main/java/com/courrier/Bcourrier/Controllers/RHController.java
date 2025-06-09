@@ -1,5 +1,6 @@
 package com.courrier.Bcourrier.Controllers;
 
+import com.courrier.Bcourrier.DTO.AdminBC.ConsulterCourrierEmployeDTO;
 import com.courrier.Bcourrier.DTO.Profile.ChangePasswordDTO;
 import com.courrier.Bcourrier.DTO.Profile.PersonalInfoDTO;
 import com.courrier.Bcourrier.DTO.Profile.PreferencesDTO;
@@ -7,6 +8,7 @@ import com.courrier.Bcourrier.DTO.RH.CourrierEmployeeDTO;
 import com.courrier.Bcourrier.DTO.RH.EmployeeListDTO;
 import com.courrier.Bcourrier.DTO.RH.RhDashboardDTO;
 import com.courrier.Bcourrier.Entities.Courrier;
+import com.courrier.Bcourrier.Enums.TypeCourrier;
 import com.courrier.Bcourrier.Repositories.AffectationCourrierEmployeRepository;
 import com.courrier.Bcourrier.Repositories.CourrierRepository;
 import com.courrier.Bcourrier.Services.ProfilService;
@@ -27,6 +29,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @RestController
@@ -131,6 +134,19 @@ public class RHController {
         }
     }
 
+    @GetMapping("/consulter-courrier/employe")
+    public List<ConsulterCourrierEmployeDTO> getCourrierEmploye() {
+        List<Courrier> courriers = courrierRepository.findByType(TypeCourrier.EMPLOYE);
+
+        return courriers.stream()
+                .map(c -> new ConsulterCourrierEmployeDTO(
+                        c.getDateRegistre(),
+                        c.getObject(),
+                        c.getEmploye().getNom(),
+                        c.getEmploye().getCin()
+                ))
+                .collect(Collectors.toList());
+    }
 
 
 
