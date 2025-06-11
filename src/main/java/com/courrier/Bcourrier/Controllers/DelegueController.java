@@ -15,15 +15,17 @@ import com.courrier.Bcourrier.Services.ProfilService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -108,6 +110,26 @@ public class DelegueController {
         return ResponseEntity.ok(delegueService.getStats());
     }
 
+    @GetMapping("/support")
+    public ResponseEntity<InputStreamResource> viewPdf() {
+        try {
+            ClassPathResource pdfFile = new ClassPathResource("support/DELEGUE.pdf");
 
+            if (!pdfFile.exists()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDisposition(ContentDisposition.inline().filename("ADMINBC.pdf").build());
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(new InputStreamResource(pdfFile.getInputStream()));
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 
 }

@@ -17,21 +17,23 @@ import com.courrier.Bcourrier.Services.ProfilService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.List;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
@@ -248,6 +250,28 @@ public class AdminBCController {
         boolean ok = adminBcService.adminBCUpdateCourrier(dto);
         return ok ? ResponseEntity.ok("Courrier mis à jour")
                 : ResponseEntity.status(400).body("Mise à jour échouée");
+    }
+
+    @GetMapping("/support")
+    public ResponseEntity<InputStreamResource> viewPdf() {
+        try {
+            ClassPathResource pdfFile = new ClassPathResource("support/ADMINBC.pdf");
+
+            if (!pdfFile.exists()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDisposition(ContentDisposition.inline().filename("ADMINBC.pdf").build());
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(new InputStreamResource(pdfFile.getInputStream()));
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
 
