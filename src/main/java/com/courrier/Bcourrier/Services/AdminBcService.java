@@ -2,14 +2,9 @@ package com.courrier.Bcourrier.Services;
 
 import com.courrier.Bcourrier.DTO.AdminBC.*;
 import com.courrier.Bcourrier.Entities.*;
-import com.courrier.Bcourrier.Enums.Confidentialite;
 import com.courrier.Bcourrier.Enums.TypeCourrier;
-import com.courrier.Bcourrier.Enums.Urgence;
-import com.courrier.Bcourrier.Enums.VoieExpedition;
 import com.courrier.Bcourrier.Repositories.*;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -32,7 +27,7 @@ public class AdminBcService {
     private final UrgenceRepository urgenceRepository;
     private final AffectationCourrierServiceRepository affectationCourrierServiceRepository;
     private final AffectationCourrierEmployeRepository affectationCourrierEmployeRepository;
-    private final ConfidentialitéRepository confidentialiteRepository;
+    private final ConfidentialiteRepository confidentialiteRepository;
     @Autowired
     private final DepartRepository departRepository;
     @Autowired
@@ -301,8 +296,8 @@ public class AdminBcService {
 
         resp.setCourriers(courriers);
         resp.setServices(serviceInternRepository.findAll());
-        resp.setUrgences(Arrays.asList(Urgence.values()));
-        resp.setConfidentialites(Arrays.asList(Confidentialite.values()));
+        resp.setUrgences(urgenceRepository.findAll());
+        resp.setConfidentialites(confidentialiteRepository.findAll());
         return resp;
     }
 
@@ -334,8 +329,8 @@ public class AdminBcService {
 
         resp.setCourriers(courriers);
         resp.setServices(serviceInternRepository.findAll());
-        resp.setUrgences(Arrays.asList(Urgence.values()));
-        resp.setConfidentialites(Arrays.asList(Confidentialite.values()));
+        resp.setUrgences(urgenceRepository.findAll());
+        resp.setConfidentialites(confidentialiteRepository.findAll());
         return resp;
     }
 
@@ -352,7 +347,7 @@ public class AdminBcService {
 
         // 3. Courriers urgents
         int urgentCount = (int) courrierRepository.findAll().stream()
-                .filter(c -> c.getUrgence() == Urgence.URGENT)
+                .filter(c -> c.getUrgence() == urgenceRepository.findByNom("URGENT"))
                 .count();
         dto.setTotalUrgentCourriers(urgentCount);
 
@@ -388,12 +383,16 @@ public class AdminBcService {
         dto.setMonthlyDeparts(monthlyDeparts);
 
         // 5. Confidentiality distribution
-        Map<String, Integer> confCounts = Arrays.stream(Confidentialite.values())
+        Map<String, Integer> confCounts = confidentialiteRepository.findAll().stream()
                 .collect(Collectors.toMap(
-                        Enum::name,
-                        conf -> (int) courriers.stream().filter(c -> c.getDegreConfiden() == conf).count()
+                        Confidentialite::getNom,
+                        conf -> (int) courriers.stream()
+                                .filter(c -> c.getDegreConfiden() != null && c.getDegreConfiden().getId()== conf.getId())
+                                .count()
                 ));
+
         dto.setConfidentialiteCounts(confCounts);
+
 
         // 6. Courriers par service (by service name)
         Map<String, Map<String, Integer>> courriersByService =
@@ -456,12 +455,11 @@ public class AdminBcService {
 
         // Update Urgence
         if (dto.getUrgence() != null) {
-            courrier.setUrgence(Urgence.valueOf(dto.getUrgence()));
         }
 
         // Update Confidentialite
         if (dto.getConfidentialite() != null) {
-            courrier.setDegreConfiden(Confidentialite.valueOf(dto.getConfidentialite()));
+            courrier.setDegreConfiden(confidentialiteRepository.findTopByNomOrderByIdDesc(dto.getConfidentialite()));
         }
 
         courrierRepository.save(courrier);

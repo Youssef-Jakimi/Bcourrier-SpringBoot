@@ -2,8 +2,10 @@ package com.courrier.Bcourrier.Controllers;
 
 import com.courrier.Bcourrier.DTO.PasswordResetRequest;
 import com.courrier.Bcourrier.Entities.Employe;
-import com.courrier.Bcourrier.Enums.Questions;
+import com.courrier.Bcourrier.Entities.Question;
 import com.courrier.Bcourrier.Repositories.EmployeRepository;
+import com.courrier.Bcourrier.Repositories.QuestionRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +22,15 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/recover")
+@RequiredArgsConstructor
 public class RecoveryController {
 
     @Autowired
     private EmployeRepository employeRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    private final QuestionRepository questionRepository;
+
 
     @Autowired
     private JavaMailSender mailSender;
@@ -131,8 +136,9 @@ public class RecoveryController {
 
     @GetMapping("/questions")
     public ResponseEntity<List<String>> getAllSecurityQuestions() {
-        List<String> questions = Arrays.stream(Questions.values())
-                .map(Enum::name)
+        List<String> questions = questionRepository.findAll()
+                .stream()
+                .map(Question::getNom) // or use `.map(q -> q.getText())`
                 .collect(Collectors.toList());
         return ResponseEntity.ok(questions);
     }

@@ -1,13 +1,12 @@
 package com.courrier.Bcourrier.Entities;
 
-import com.courrier.Bcourrier.Enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -36,8 +35,8 @@ public class Employe {
                 private String password;
 
 
-                @Enumerated(EnumType.STRING)
-                @Column(name = "role", nullable = true)
+                @ManyToOne
+                @JoinColumn(name = "role", referencedColumnName = "id")
                 private Role role;
 
                 @Column(name = "matricule", nullable = true)
@@ -95,5 +94,7 @@ public class Employe {
 
                 private String verificationToken;
 
+                 private LocalDateTime dateCreation;
+                 private LocalDateTime dateSuppression;
 
 }

@@ -1,15 +1,12 @@
 package com.courrier.Bcourrier.Entities;
 
-import com.courrier.Bcourrier.Enums.Confidentialite;
 import com.courrier.Bcourrier.Enums.StatutCourrier;
 import com.courrier.Bcourrier.Enums.TypeCourrier;
-import com.courrier.Bcourrier.Enums.Urgence;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Data
 @Entity
@@ -64,12 +61,12 @@ public class Courrier {
     @Column(name = "nature", nullable = true)
     private String nature;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "Degre_Confiden", nullable = true)
+    @ManyToOne
+    @JoinColumn(name = "confidentialite", referencedColumnName = "id")
     private Confidentialite degreConfiden;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "urgence", nullable = true)
+    @ManyToOne
+    @JoinColumn(name = "urgence", referencedColumnName = "id")
     private Urgence urgence;
 
     @Column(name = "attachment_path")

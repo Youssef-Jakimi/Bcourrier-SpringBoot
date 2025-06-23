@@ -1,6 +1,5 @@
 package com.courrier.Bcourrier.Entities;
 
-import com.courrier.Bcourrier.Enums.VoieExpedition;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -26,8 +25,8 @@ public class Depart {
     @JoinColumn(name = "courrier", referencedColumnName = "id")
     private Courrier courrier;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "voie_expedition", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "voieExpedition", referencedColumnName = "id")
     private VoieExpedition voieExpedition;
 
     // Getters and Setters

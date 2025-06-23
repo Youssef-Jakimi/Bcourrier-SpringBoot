@@ -1,16 +1,11 @@
 package com.courrier.Bcourrier.Controllers;
 
 import com.courrier.Bcourrier.DTO.AdminBC.*;
-import com.courrier.Bcourrier.DTO.Profile.ChangePasswordDTO;
-import com.courrier.Bcourrier.DTO.Profile.PersonalInfoDTO;
-import com.courrier.Bcourrier.DTO.Profile.PreferencesDTO;
+import com.courrier.Bcourrier.Entities.Confidentialite;
 import com.courrier.Bcourrier.Entities.Courrier;
-import com.courrier.Bcourrier.Entities.Employe;
-import com.courrier.Bcourrier.Entities.ServiceIntern;
-import com.courrier.Bcourrier.Enums.Confidentialite;
+import com.courrier.Bcourrier.Entities.Urgence;
+import com.courrier.Bcourrier.Entities.VoieExpedition;
 import com.courrier.Bcourrier.Enums.TypeCourrier;
-import com.courrier.Bcourrier.Enums.Urgence;
-import com.courrier.Bcourrier.Enums.VoieExpedition;
 import com.courrier.Bcourrier.Repositories.*;
 import com.courrier.Bcourrier.Services.AdminBcService;
 import com.courrier.Bcourrier.Services.ProfilService;
@@ -22,23 +17,16 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.Principal;
 import java.util.List;
 
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.stream.Collectors;
 
 @Data
@@ -52,7 +40,7 @@ public class AdminBCController {
     private final ServiceInternRepository serviceInternRepository;
     private final AdminBcService adminBcService;
     private final UrgenceRepository urgenceRepository;
-    private final ConfidentialitéRepository confidentialitéRepository;
+    private final ConfidentialiteRepository confidentialiteRepository;
     private final ProfilService profilService;
     private final EmployeRepository employeRepository;
     private final AdminBcRepository adminBcRepository;
@@ -94,7 +82,7 @@ public class AdminBCController {
         AjouterDTO dto = new AjouterDTO();
 
         dto.setUrgences(urgenceRepository.findAll());
-        dto.setConfidentialites(confidentialitéRepository.findAll());
+        dto.setConfidentialites(confidentialiteRepository.findAll());
         dto.setServices(serviceInternRepository.findAll());
 
         List<EmployeDTO> employeDTOs = employeRepository.findAll().stream()

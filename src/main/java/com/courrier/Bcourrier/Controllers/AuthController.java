@@ -4,8 +4,9 @@ import com.courrier.Bcourrier.DTO.LoginRequest;
 import com.courrier.Bcourrier.DTO.RegisterRequest;
 import com.courrier.Bcourrier.DTO.SecurityQuestionDTO;
 import com.courrier.Bcourrier.Entities.Employe;
-import com.courrier.Bcourrier.Enums.Questions;
+import com.courrier.Bcourrier.Entities.Question;
 import com.courrier.Bcourrier.Repositories.EmployeRepository;
+import com.courrier.Bcourrier.Repositories.QuestionRepository;
 import com.courrier.Bcourrier.Services.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ public class AuthController {
     @Autowired
     private AuthService authService;
     private final EmployeRepository employeRepository;
+    private final QuestionRepository questionRepository;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
@@ -57,8 +59,9 @@ public class AuthController {
         employe.setCheckEmail(true);
         employeRepository.save(employe);
 
-        List<String> questions = Arrays.stream(Questions.values())
-                .map(Enum::name)
+        List<String> questions = questionRepository.findAll()
+                .stream()
+                .map(Question::getNom) // or use `.map(q -> q.getText())`
                 .collect(Collectors.toList());
 
         Map<String, Object> response = new HashMap<>();

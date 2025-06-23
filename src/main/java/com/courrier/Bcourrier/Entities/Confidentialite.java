@@ -3,10 +3,12 @@ package com.courrier.Bcourrier.Entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @Table(name = "confidentialite")
-public class Confidentialité {
+public class Confidentialite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,4 +16,7 @@ public class Confidentialité {
 
     @Column(name = "nom", nullable = false)
     private String nom;
+
+    private LocalDateTime dateCreation;
+    private LocalDateTime dateSuppression;
 }

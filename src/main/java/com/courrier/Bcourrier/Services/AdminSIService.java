@@ -5,19 +5,16 @@ import com.courrier.Bcourrier.DTO.AdminSI.AdminSICreateServiceDTO;
 import com.courrier.Bcourrier.DTO.AdminSI.AdminSIDashboardDTO;
 import com.courrier.Bcourrier.DTO.AdminSI.AdminSIModifyUserDTO;
 import com.courrier.Bcourrier.DTO.AdminSI.AdminSIUserDTO;
-import com.courrier.Bcourrier.Entities.Confidentialité;
+import com.courrier.Bcourrier.Entities.Confidentialite;
 import com.courrier.Bcourrier.Entities.Employe;
 import com.courrier.Bcourrier.Entities.ServiceIntern;
 import com.courrier.Bcourrier.Entities.Urgence;
-import com.courrier.Bcourrier.Enums.Role;
 import com.courrier.Bcourrier.Repositories.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,7 +34,7 @@ public class AdminSIService {
     private final RoleRepository roleRepository;
 
     @Autowired
-    private final ConfidentialitéRepository confidentialiteRepository;
+    private final ConfidentialiteRepository confidentialiteRepository;
     @Autowired
     private final ServiceInternRepository serviceInternRepository;
 
@@ -104,7 +101,7 @@ public class AdminSIService {
         Employe emp = opt.get();
 
         if (dto.getRole() != null) {
-            emp.setRole(Role.valueOf(dto.getRole())); // Adapt if using string/enum
+            emp.setRole(roleRepository.findTopByNomOrderByIdDesc(dto.getRole())); // Adapt if using string/enum
         }
         if (dto.getServiceId() != null) {
             serviceInternRepository.findById(dto.getServiceId())
@@ -124,7 +121,7 @@ public class AdminSIService {
 
         // Must provide BOTH role and service to activate
         if (dto.getRole() == null || dto.getServiceId() == null) return false;
-        emp.setRole(Role.valueOf(dto.getRole()));
+        emp.setRole(roleRepository.findTopByNomOrderByIdDesc(dto.getRole())); // Adapt if using string/enum
         serviceInternRepository.findById(dto.getServiceId())
                 .ifPresent(emp::setService);
         emp.setActive(true);
@@ -163,10 +160,10 @@ public class AdminSIService {
     }
 
     // --- CONFIDENTIALITE ---
-    public List<Confidentialité> getAllConfidentialites() {
+    public List<Confidentialite> getAllConfidentialites() {
         return confidentialiteRepository.findAll();
     }
-    public boolean addConfidentialite(Confidentialité c) {
+    public boolean addConfidentialite(Confidentialite c) {
         if (c.getNom() == null || c.getNom().isBlank()) return false;
         confidentialiteRepository.save(c);
         return true;

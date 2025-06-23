@@ -4,11 +4,11 @@ import com.courrier.Bcourrier.DTO.AdminSI.AdminSICreateServiceDTO;
 import com.courrier.Bcourrier.DTO.AdminSI.AdminSIDashboardDTO;
 import com.courrier.Bcourrier.DTO.AdminSI.AdminSIModifyUserDTO;
 import com.courrier.Bcourrier.DTO.AdminSI.AdminSIUserDTO;
-import com.courrier.Bcourrier.Entities.Confidentialité;
+import com.courrier.Bcourrier.Entities.Confidentialite;
 import com.courrier.Bcourrier.Entities.Role;
 import com.courrier.Bcourrier.Entities.ServiceIntern;
 import com.courrier.Bcourrier.Entities.Urgence;
-import com.courrier.Bcourrier.Repositories.ConfidentialitéRepository;
+import com.courrier.Bcourrier.Repositories.ConfidentialiteRepository;
 import com.courrier.Bcourrier.Repositories.RoleRepository;
 import com.courrier.Bcourrier.Repositories.ServiceInternRepository;
 import com.courrier.Bcourrier.Repositories.UrgenceRepository;
@@ -21,6 +21,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -31,7 +32,7 @@ public class AdminSIController {
     @Autowired
     private AdminSIService adminSIService;
     private final ServiceInternRepository serviceInternRepository;
-    private final ConfidentialitéRepository confidentialiteRepository;
+    private final ConfidentialiteRepository confidentialiteRepository;
     private final RoleRepository roleRepository;
     private final UrgenceRepository UrgenceRepository;
 
@@ -102,40 +103,53 @@ public class AdminSIController {
 
     // --- CONFIDENTIALITE ---
     @GetMapping("/confidentialites")
-    public List<Confidentialité> getConfidentialites() {
+    public List<Confidentialite> getConfidentialites() {
         return adminSIService.getAllConfidentialites();
     }
 
     @PostMapping("/confidentialites")
-    public ResponseEntity<String> addConfidentialite(@RequestBody Confidentialité c) {
+    public ResponseEntity<String> addConfidentialite(@RequestBody Confidentialite c) {
         boolean ok = adminSIService.addConfidentialite(c);
         return ok ? ResponseEntity.ok("Confidentialité ajoutée")
                 : ResponseEntity.status(400).body("Erreur ajout confidentialité");
     }
 
-    @DeleteMapping("/service/{id}")
-    public ResponseEntity<?> deleteServiceIntern(@PathVariable Long id) {
-        serviceInternRepository.deleteById(id);
-        return ResponseEntity.ok().body("Deleted successfully");
+    @PutMapping("/service/{id}/delete")
+    public ResponseEntity<?> softDeleteServiceIntern(@PathVariable Long id) {
+        return serviceInternRepository.findById(id).map(service -> {
+            service.setDateSuppression(LocalDateTime.now());
+            serviceInternRepository.save(service);
+            return ResponseEntity.ok("Marked as deleted (dateImpression set)");
+        }).orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/delete/urgence/{id}")
-    public ResponseEntity<?> deleteurgence(@PathVariable Long id) {
-        UrgenceRepository.deleteById(id);
-        return ResponseEntity.ok().body("Deleted successfully");
+    @PutMapping("/delete/urgence/{id}")
+    public ResponseEntity<?> softDeleteUrgence(@PathVariable Long id) {
+        return UrgenceRepository.findById(id).map(urgence -> {
+            urgence.setDateSuppression(LocalDateTime.now());
+            UrgenceRepository.save(urgence);
+            return ResponseEntity.ok("Marked as deleted (dateImpression set)");
+        }).orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/delete/role/{id}")
-    public ResponseEntity<?> deleterole(@PathVariable Long id) {
-        roleRepository.deleteById(id);
-        return ResponseEntity.ok().body("Deleted successfully");
+    @PutMapping("/delete/role/{id}")
+    public ResponseEntity<?> softDeleteRole(@PathVariable Long id) {
+        return roleRepository.findById(id).map(role -> {
+            role.setDateSuppression(LocalDateTime.now());
+            roleRepository.save(role);
+            return ResponseEntity.ok("Marked as deleted (dateImpression set)");
+        }).orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/delete/confidentialite/{id}")
-    public ResponseEntity<?> deleteconf(@PathVariable Long id) {
-        confidentialiteRepository.deleteById(id);
-        return ResponseEntity.ok().body("Deleted successfully");
+    @PutMapping("/delete/confidentialite/{id}")
+    public ResponseEntity<?> softDeleteConfidentialite(@PathVariable Long id) {
+        return confidentialiteRepository.findById(id).map(conf -> {
+            conf.setDateSuppression(LocalDateTime.now());
+            confidentialiteRepository.save(conf);
+            return ResponseEntity.ok("Marked as deleted (dateImpression set)");
+        }).orElse(ResponseEntity.notFound().build());
     }
+
 
     @GetMapping("/support")
     public ResponseEntity<InputStreamResource> viewPdf() {

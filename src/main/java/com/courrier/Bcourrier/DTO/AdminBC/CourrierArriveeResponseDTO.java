@@ -1,7 +1,7 @@
 package com.courrier.Bcourrier.DTO.AdminBC;
+import com.courrier.Bcourrier.Entities.Confidentialite;
 import com.courrier.Bcourrier.Entities.ServiceIntern;
-import com.courrier.Bcourrier.Enums.Confidentialite;
-import com.courrier.Bcourrier.Enums.Urgence;
+import com.courrier.Bcourrier.Entities.Urgence;
 import lombok.Data;
 
 import java.util.List;

@@ -4,10 +4,9 @@ import com.courrier.Bcourrier.DTO.AdminBC.AdminBCDashboardDTO;
 import com.courrier.Bcourrier.DTO.AdminBC.CourrierArriveeDTO;
 import com.courrier.Bcourrier.DTO.AdminBC.CourrierDepartDTO;
 import com.courrier.Bcourrier.DTO.AdminBC.StatsDTO;
+import com.courrier.Bcourrier.Entities.Confidentialite;
 import com.courrier.Bcourrier.Entities.Courrier;
-import com.courrier.Bcourrier.Enums.Confidentialite;
 import com.courrier.Bcourrier.Enums.TypeCourrier;
-import com.courrier.Bcourrier.Enums.Urgence;
 import com.courrier.Bcourrier.Repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,6 +23,7 @@ public class DelegueService {
     @Autowired
     private final DelegueRepository delegueRepository;
     private final EmployeRepository employeRepository;
+    private final ConfidentialiteRepository confidentialiteRepository;
     @Autowired
     private final DepartRepository departRepository;
     @Autowired
@@ -180,7 +179,7 @@ public class DelegueService {
 
         // 3. Courriers urgents
         int urgentCount = (int) courrierRepository.findAll().stream()
-                .filter(c -> c.getUrgence() == Urgence.URGENT)
+                .filter(c -> c.getUrgence().getNom() == "URGENT")
                 .count();
         dto.setTotalUrgentCourriers(urgentCount);
 
@@ -216,11 +215,14 @@ public class DelegueService {
         dto.setMonthlyDeparts(monthlyDeparts);
 
         // 5. Confidentiality distribution
-        Map<String, Integer> confCounts = Arrays.stream(Confidentialite.values())
+        Map<String, Integer> confCounts = confidentialiteRepository.findAll().stream()
                 .collect(Collectors.toMap(
-                        Enum::name,
-                        conf -> (int) courriers.stream().filter(c -> c.getDegreConfiden() == conf).count()
+                        Confidentialite::getNom,
+                        conf -> (int) courriers.stream()
+                                .filter(c -> c.getDegreConfiden() != null && c.getDegreConfiden().getId()== conf.getId())
+                                .count()
                 ));
+
         dto.setConfidentialiteCounts(confCounts);
 
         // 6. Courriers par service (by service name)
