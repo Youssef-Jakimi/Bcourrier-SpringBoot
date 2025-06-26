@@ -3,6 +3,7 @@ package com.courrier.Bcourrier.Entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,6 +18,6 @@ public class Confidentialite {
     @Column(name = "nom", nullable = false)
     private String nom;
 
-    private LocalDateTime dateCreation;
+    private Timestamp dateCreation;
     private LocalDateTime dateSuppression;
 }

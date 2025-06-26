@@ -19,6 +19,9 @@ public interface CourrierRepository extends JpaRepository<Courrier, Integer> {
     @Query("SELECT FUNCTION('DATE_FORMAT', c.dateRegistre, '%Y-%m') as month, COUNT(c) FROM Courrier c WHERE c.archiver = true GROUP BY month")
     List<Object[]> countArchivedCourriersPerMonthRaw();
 
+    @Query("SELECT numeroRegistre FROM Courrier")
+    List<Integer> listCourrier();
+
     List<Courrier> findByServiceAndTypeAndArchiverFalse(ServiceIntern service, TypeCourrier type);
     List<Courrier> findByServiceAndTypeAndArchiverTrue(ServiceIntern service, TypeCourrier type);
     Long countByServiceAndTypeAndArchiverFalse(ServiceIntern service, TypeCourrier type);

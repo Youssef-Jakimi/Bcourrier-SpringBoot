@@ -183,16 +183,23 @@ public class AdminBcService {
             Long serviceId,
             MultipartFile attachment,
             String nomExpediteur,
-            VoieExpedition voieExpedition
-    ) throws IOException {
-        LocalDate today = LocalDate.now();
+            VoieExpedition voieExpedition,
+            LocalDate dateArrivee,
+            LocalDate dateRegistre,
+            Integer reponseAId // 👈 New parameter
 
+
+    ) throws IOException {
         Optional<ServiceIntern> serviceOpt = serviceInternRepository.findById(serviceId);
         if (serviceOpt.isEmpty()) {
             throw new IllegalArgumentException("Service cible introuvable");
         }
-
-        String uploadsDir = "./uploads/courriers"; // No leading slash
+        Courrier reponseCourrier = null;
+        if (reponseAId != null) {
+            reponseCourrier = courrierRepository.findById(reponseAId)
+                    .orElseThrow(() -> new IllegalArgumentException("Courrier source introuvable"));
+        }
+        String uploadsDir = "./uploads/courriers";
         String originalFilename = StringUtils.cleanPath(attachment.getOriginalFilename());
         String filePath = uploadsDir + UUID.randomUUID() + "_" + originalFilename;
         Path path = Paths.get(filePath);
@@ -205,11 +212,20 @@ public class AdminBcService {
         courrier.setDescription(description);
         courrier.setDegreConfiden(degreConfidentialite);
         courrier.setUrgence(urgence);
-        courrier.setDateRegistre(today);
         courrier.setNumeroRegistre(numeroRegistre);
         courrier.setAttachmentPath(filePath);
         courrier.setService(serviceOpt.get());
         courrier.setType(TypeCourrier.DEPART);
+
+        // 👇 Link response if available
+        if (reponseCourrier != null) {
+            courrier.setReponseA(reponseCourrier);
+        }
+
+        // ✅ Use provided dates
+        courrier.setDateArrive(dateArrivee);
+        courrier.setDateRegistre(dateRegistre);
+
         courrierRepository.save(courrier);
 
         Depart depart = new Depart();
@@ -218,27 +234,35 @@ public class AdminBcService {
         depart.setCourrier(courrier);
         departRepository.save(depart);
 
-        // 👇 Now create the affectation entry
         AffectationCourrierService affectation = new AffectationCourrierService();
         affectation.setCourrier(courrier);
-        affectation.setService(serviceInternRepository.findById(serviceId).orElseThrow());
-        affectation.setDateAffection(today);
+        affectation.setService(serviceOpt.get());
+        affectation.setDateAffection(LocalDate.now());
         affectation.setHeureAffectation(LocalTime.now().toString());
         affectation.setTypeAffectation("Automatique");
 
         affectationCourrierServiceRepository.save(affectation);
     }
 
+
     public void enregistrerCourrierEmploye(
             String objet,
             String description,
             int numeroRegistre,
             Long employeId,
-            MultipartFile attachment
+            MultipartFile attachment,
+            LocalDate dateArrivee,
+            LocalDate dateRegistre,
+            Integer reponseAId // 👈 New parameter
+
     ) throws IOException {
         LocalDate today = LocalDate.now();
         Optional<Employe> employe = employeRepository.findById(employeId);
-
+        Courrier reponseCourrier = null;
+        if (reponseAId != null) {
+            reponseCourrier = courrierRepository.findById(reponseAId)
+                    .orElseThrow(() -> new IllegalArgumentException("Courrier source introuvable"));
+        }
         String uploadsDir = "./uploads/courriers"; // No leading slash
         String originalFilename = StringUtils.cleanPath(attachment.getOriginalFilename());
         String filePath = uploadsDir + UUID.randomUUID() + "_" + originalFilename;
@@ -254,6 +278,12 @@ public class AdminBcService {
         courrier.setNumeroRegistre(numeroRegistre);
         courrier.setAttachmentPath(filePath);
         courrier.setType(TypeCourrier.EMPLOYE);
+        courrier.setDateArrive(dateArrivee);
+        courrier.setDateRegistre(dateRegistre);
+        // 👇 Link response if available
+        if (reponseCourrier != null) {
+            courrier.setReponseA(reponseCourrier);
+        }
         courrierRepository.save(courrier);
 
         // 👇 Now create the affectation entry

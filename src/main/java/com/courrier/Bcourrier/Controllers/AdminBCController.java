@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.web.server.ResponseStatusException;
@@ -81,6 +82,7 @@ public class AdminBCController {
     public AjouterDTO getStaticOptions() {
         AjouterDTO dto = new AjouterDTO();
 
+        dto.setNumRegister(courrierRepository.listCourrier());
         dto.setUrgences(urgenceRepository.findAll());
         dto.setConfidentialites(confidentialiteRepository.findAll());
         dto.setServices(serviceInternRepository.findAll());
@@ -116,7 +118,11 @@ public class AdminBCController {
             @RequestParam("description") String description,
             @RequestParam("numeroRegistre") int numeroRegistre,
             @RequestParam("employeId") Long employeId,
-            @RequestParam("attachment") MultipartFile attachment
+            @RequestParam("attachment") MultipartFile attachment,
+            @RequestParam("dateArrive") LocalDate dateArrive,
+            @RequestParam("dateEnregistre") LocalDate dateEnregistre,
+            @RequestParam(name = "reponseAId", required = false) Integer reponseAId // 👈 NEW parameter
+
     ) {
         try {
             adminBcService.enregistrerCourrierEmploye(
@@ -124,7 +130,8 @@ public class AdminBCController {
                     description,
                     numeroRegistre,
                     employeId,
-                    attachment
+                    attachment,
+                    dateArrive,dateEnregistre,reponseAId
             );
             return ResponseEntity.ok("Courrier enregistré avec succès.");
         } catch (IllegalArgumentException e) {
@@ -145,14 +152,19 @@ public class AdminBCController {
             @RequestParam("service") Long serviceId,
             @RequestParam("attachment") MultipartFile attachment,
             @RequestParam("nomExpediteur") String nomExpediteur,
-            @RequestParam("voieExpedition") VoieExpedition voieExpedition
+            @RequestParam("voieExpedition") VoieExpedition voieExpedition,
+            @RequestParam("dateArrive") LocalDate dateArrive,
+            @RequestParam("dateEnregistre") LocalDate dateEnregistre,
+            @RequestParam(name = "reponseAId", required = false) Integer reponseAId // 👈 NEW parameter
+
+
     ) {
 
 
         try {
             courrierService.enregistrerCourrierDepart(
                     objet,nature, description, degreConfidentialite, urgence, numeroRegistre,
-                    serviceId, attachment,nomExpediteur, voieExpedition
+                    serviceId, attachment,nomExpediteur, voieExpedition,dateArrive,dateEnregistre,reponseAId
             );
             return ResponseEntity.ok("Départ enregistré avec succès");
         } catch (Exception e) {

@@ -97,8 +97,8 @@ public class AuthService {
 
         Employe employe = userOpt.get();
 
-        if (!employe.isCheckEmail()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Account not active. Please verify your email.");
+        if (!employe.isCheckEmail() || !employe.isActive()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Account not active. Please wait a moment.");
         }
 
         if (!passwordEncoder.matches(request.getPassword(), employe.getPassword())) {
@@ -109,7 +109,7 @@ public class AuthService {
 
         return ResponseEntity.ok(Map.of(
                 "token", token,
-                "role", employe.getRole()
+                "role", employe.getRole().getNom()
         ));
     }
 

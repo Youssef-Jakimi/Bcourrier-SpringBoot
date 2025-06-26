@@ -14,5 +14,6 @@ public class AjouterDTO {
     private List<Confidentialite> confidentialites;
     private List<ServiceIntern> services;
     private List<EmployeDTO> employes;
+    private List<Integer> numRegister;
 
 }

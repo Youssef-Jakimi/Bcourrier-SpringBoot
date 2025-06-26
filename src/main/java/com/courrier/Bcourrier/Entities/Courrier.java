@@ -61,6 +61,11 @@ public class Courrier {
     @Column(name = "nature", nullable = true)
     private String nature;
 
+
+    @ManyToOne
+    @JoinColumn(name = "reponseA", referencedColumnName = "id", nullable = true)
+    private Courrier reponseA;
+
     @ManyToOne
     @JoinColumn(name = "confidentialite", referencedColumnName = "id")
     private Confidentialite degreConfiden;
