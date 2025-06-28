@@ -5,10 +5,7 @@ import com.courrier.Bcourrier.DTO.AdminSI.AdminSICreateServiceDTO;
 import com.courrier.Bcourrier.DTO.AdminSI.AdminSIDashboardDTO;
 import com.courrier.Bcourrier.DTO.AdminSI.AdminSIModifyUserDTO;
 import com.courrier.Bcourrier.DTO.AdminSI.AdminSIUserDTO;
-import com.courrier.Bcourrier.Entities.Confidentialite;
-import com.courrier.Bcourrier.Entities.Employe;
-import com.courrier.Bcourrier.Entities.ServiceIntern;
-import com.courrier.Bcourrier.Entities.Urgence;
+import com.courrier.Bcourrier.Entities.*;
 import com.courrier.Bcourrier.Repositories.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +23,7 @@ public class AdminSIService {
 
     @Autowired
     private final EmployeRepository employeRepository;
+    private final QuestionRepository questionRepository;
 
     @Autowired
     private final  UrgenceRepository urgenceRepository;
@@ -201,5 +199,11 @@ public class AdminSIService {
         }
     }
 
+    public boolean addQuestion(String question) {
+        Question q = new Question();
+        q.setNom(question);
+        questionRepository.save(q);
+        return true;
+    }
 
 }

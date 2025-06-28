@@ -317,8 +317,8 @@ public class AdminBcService {
                     dto.setService(c.getService() != null ? c.getService().getNom() : null);
                     dto.setEmploye(c.getEmploye() != null ? c.getEmploye().getPrenom() + " " + c.getEmploye().getNom() : null);
                     dto.setNature(c.getNature());
-                    dto.setDegreConfiden(c.getDegreConfiden() != null ? c.getDegreConfiden().toString() : null);
-                    dto.setUrgence(c.getUrgence() != null ? c.getUrgence().toString() : null);
+                    dto.setDegreConfiden(c.getDegreConfiden() != null ? c.getDegreConfiden().getNom() : null);
+                    dto.setUrgence(c.getUrgence() != null ? c.getUrgence().getNom() : null);
                     dto.setMotDes(c.getMotDes());
                     return dto;
                 })
@@ -348,10 +348,10 @@ public class AdminBcService {
                     dto.setService(d.getCourrier().getService() != null ? d.getCourrier().getService().getNom() : null);
                     dto.setEmploye(d.getCourrier().getEmploye() != null ? d.getCourrier().getEmploye().getPrenom() + " " + d.getCourrier().getEmploye().getNom() : null);
                     dto.setNomExpediteur(d.getNomExpediteur());
-                    dto.setVoieExpedition(d.getVoieExpedition() != null ? d.getVoieExpedition().toString() : null);
+                    dto.setVoieExpedition(d.getVoieExpedition() != null ? d.getVoieExpedition().getNom() : null);
                     dto.setNature(d.getCourrier().getNature());
-                    dto.setDegreConfiden(d.getCourrier().getDegreConfiden() != null ? d.getCourrier().getDegreConfiden().toString() : null);
-                    dto.setUrgence(d.getCourrier().getUrgence() != null ? d.getCourrier().getUrgence().toString() : null);
+                    dto.setDegreConfiden(d.getCourrier().getDegreConfiden() != null ? d.getCourrier().getDegreConfiden().getNom() : null);
+                    dto.setUrgence(d.getCourrier().getUrgence() != null ? d.getCourrier().getUrgence().getNom() : null);
                     dto.setMotDes(d.getCourrier().getMotDes());
                     return dto;
                 })
