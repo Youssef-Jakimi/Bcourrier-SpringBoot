@@ -397,9 +397,10 @@ public class AdminBCController {
         return courrierRepository.findById(id).map(svc -> {
             svc.setArchiver(true);
             courrierRepository.save(svc);
-            return ResponseEntity.ok("restoré");
+            return ResponseEntity.ok("archivé");
         }).orElse(ResponseEntity.notFound().build());
     }
+
 
 
 
