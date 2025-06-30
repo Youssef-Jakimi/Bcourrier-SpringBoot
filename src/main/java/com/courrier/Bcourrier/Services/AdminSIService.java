@@ -48,7 +48,7 @@ public class AdminSIService {
         dto.setToActivateEmployees(employeRepository.countByActiveFalse());
 
         // Total services
-        dto.setTotalServices(serviceInternRepository.count());
+        dto.setTotalServices(serviceInternRepository.countservices());
 
         // Total roles
         dto.setTotalRoles(roleRepository.count());
@@ -56,7 +56,7 @@ public class AdminSIService {
         // Employees per role (for chart)
         List<Employe> allEmps = employeRepository.findAll();
         Map<String, Long> empPerRole = allEmps.stream()
-                .filter(e -> e.getRole().getNom() != null)
+                .filter(e -> e.getRole() != null)
                 .collect(Collectors.groupingBy(
                         e -> e.getRole().getNom(),
                         Collectors.counting()
@@ -85,7 +85,7 @@ public class AdminSIService {
         dto.setFullName(emp.getPrenom() + " " + emp.getNom());
         dto.setEmail(emp.getEmail());
         dto.setLogin(emp.getLogin());
-        dto.setRole(emp.getRole().getNom() != null ? emp.getRole().getNom() : null);
+        dto.setRole(emp.getRole() != null ? emp.getRole().getNom() : null);
         dto.setService(emp.getService() != null ? emp.getService().getNom() : null);
         dto.setActive(emp.isActive());
         dto.setCheckEmail(emp.isCheckEmail());
