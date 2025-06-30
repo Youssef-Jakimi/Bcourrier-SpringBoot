@@ -4,10 +4,7 @@ import com.courrier.Bcourrier.DTO.AdminSI.AdminSICreateServiceDTO;
 import com.courrier.Bcourrier.DTO.AdminSI.AdminSIDashboardDTO;
 import com.courrier.Bcourrier.DTO.AdminSI.AdminSIModifyUserDTO;
 import com.courrier.Bcourrier.DTO.AdminSI.AdminSIUserDTO;
-import com.courrier.Bcourrier.Entities.Confidentialite;
-import com.courrier.Bcourrier.Entities.Role;
-import com.courrier.Bcourrier.Entities.ServiceIntern;
-import com.courrier.Bcourrier.Entities.Urgence;
+import com.courrier.Bcourrier.Entities.*;
 import com.courrier.Bcourrier.Repositories.*;
 import com.courrier.Bcourrier.Services.AdminSIService;
 import lombok.RequiredArgsConstructor;
@@ -87,17 +84,16 @@ public class AdminSIController {
                 : ResponseEntity.status(400).body("Erreur ajout urgence");
 
     }
-    // --- VOIE ---
     @GetMapping("/Voie")
-    public List<Urgence> getAllVoie() {
-        return adminSIService.getAllUrgences();
+    public List<VoieExpedition> getAllVoie() {
+        return adminSIService.getAllVoie();
     }
 
     @PostMapping("/Voie")
-    public ResponseEntity<String> addVoie(@RequestBody Urgence u) {
-        boolean ok = adminSIService.addUrgence(u);
-        return ok ? ResponseEntity.ok("Urgence ajoutée")
-                : ResponseEntity.status(400).body("Erreur ajout urgence");
+    public ResponseEntity<String> addVoie(@RequestBody VoieExpedition u) {
+        boolean ok = adminSIService.addVoie(u);
+        return ok ? ResponseEntity.ok("Voie ajoutée")
+                : ResponseEntity.status(400).body("Erreur ajout Voie expedition");
     }
 
     // --- ROLE ---
@@ -237,6 +233,10 @@ public class AdminSIController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/question")
+    public List<Question> getQuestion() {
+        return adminSIService.getAllQuestion();
+    }
 
     @PutMapping("/voiexpedition/update/{id}")
     public ResponseEntity<?> updatevoie(@PathVariable Long id,@PathVariable String nom) {
@@ -265,34 +265,44 @@ public class AdminSIController {
 
 
     @PostMapping("/question/ajouter")
-    public boolean ajouterquestion(@PathVariable String question) {
-        return adminSIService.addQuestion(question);
-    }
-    @PutMapping("/question/update/(id)")
-    public ResponseEntity<?> updatequestion(@PathVariable Long id,@PathVariable String nom) {
-        return questionRepository.findById(id).map(svc -> {
-            svc.setNom(nom);
-            questionRepository.save(svc);
-            return ResponseEntity.ok("modifié");
-        }).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<String> ajouterQuestion(@RequestParam String question) {
+        boolean success = adminSIService.addQuestion(question);
+        if (success) {
+            return ResponseEntity.status(HttpStatus.CREATED).body("Question ajoutée");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Échec de l'ajout");
+        }
     }
 
-    @PutMapping("/question/delete/{id}")
-    public ResponseEntity<?> deletequestion(@PathVariable Long id,@PathVariable String nom) {
-        return questionRepository.findById(id).map(svc -> {
-            svc.setDateSuppression(LocalDateTime.now());
-            questionRepository.save(svc);
-            return ResponseEntity.ok("supprimé");
-        }).orElse(ResponseEntity.notFound().build());
+    @PutMapping("/question/delete")
+    public ResponseEntity<String> deleteQuestion(@RequestParam Long id) {
+        return questionRepository.findById(id).map(q -> {
+            q.setDateSuppression(LocalDateTime.now());
+            questionRepository.save(q);
+            return ResponseEntity.ok("Question supprimée");
+        }).orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Question non trouvée"));
     }
-    @PutMapping("/question/restore/{id}")
-    public ResponseEntity<?> restorequestion(@PathVariable Long id,@PathVariable String nom) {
-        return questionRepository.findById(id).map(svc -> {
-            svc.setDateSuppression(null);
-            questionRepository.save(svc);
-            return ResponseEntity.ok("modifié");
-        }).orElse(ResponseEntity.notFound().build());
+
+    @PutMapping("/question/restore")
+    public ResponseEntity<String> restoreQuestion(@RequestParam Long id) {
+        return questionRepository.findById(id).map(q -> {
+            q.setDateSuppression(null);
+            questionRepository.save(q);
+            return ResponseEntity.ok("Question restaurée");
+        }).orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Question non trouvée"));
     }
+
+    @PutMapping("/question/update")
+    public ResponseEntity<String> updateQuestion(@RequestParam Long id, @RequestParam String nom) {
+        return questionRepository.findById(id).map(q -> {
+            q.setNom(nom);
+            questionRepository.save(q);
+            return ResponseEntity.ok("Question modifiée");
+        }).orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Question non trouvée"));
+    }
+
+
+
 
 
     @GetMapping("/support")

@@ -31,6 +31,9 @@ import java.util.List;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.stream.Collectors;
+import java.sql.Timestamp;
+
+
 
 @Data
 @RestController
@@ -94,6 +97,7 @@ public class AdminBCController {
         dto.setUrgences(urgenceRepository.findAll());
         dto.setConfidentialites(confidentialiteRepository.findAll());
         dto.setServices(serviceInternRepository.findAll());
+        dto.setVoieExpeditions(voieRepository.findAll());
 
         List<EmployeDTO> employeDTOs = employeRepository.findAll().stream()
                 .map(e -> new EmployeDTO(e.getId(), e.getNom(), e.getPrenom()))
@@ -161,18 +165,25 @@ public class AdminBCController {
             @RequestParam("attachment") MultipartFile attachment,
             @RequestParam("nomExpediteur") String nomExpediteur,
             @RequestParam("voieExpedition") VoieExpedition voieExpedition,
-            @RequestParam("dateArrive") LocalDate dateDepart,
+            @RequestParam("dateDepart") LocalDate dateDepart, // ✅ renommé correctement
             @RequestParam("dateEnregistre") LocalDate dateEnregistre,
-            @RequestParam(name = "reponseAId", required = false) Integer reponseAId // 👈 NEW parameter
-
-
+            @RequestParam(name = "reponseAId", required = false) Integer reponseAId
     ) {
-
-
         try {
             courrierService.enregistrerCourrierDepart(
-                    objet,nature, description, degreConfidentialite, urgence, numeroRegistre,
-                    serviceId, attachment,nomExpediteur, voieExpedition,dateDepart,dateEnregistre,reponseAId
+                    objet,
+                    nature,
+                    description,
+                    degreConfidentialite,
+                    urgence,
+                    numeroRegistre,
+                    serviceId,
+                    attachment,
+                    nomExpediteur,
+                    voieExpedition,
+                    dateDepart,
+                    dateEnregistre,
+                    reponseAId
             );
             return ResponseEntity.ok("Départ enregistré avec succès");
         } catch (Exception e) {
@@ -181,6 +192,7 @@ public class AdminBCController {
                     .body("Erreur lors de l'enregistrement du départ");
         }
     }
+
 
 
     @GetMapping("/courriers/arrivees")
@@ -284,16 +296,18 @@ public class AdminBCController {
 
     // --- VOIE ---
     @GetMapping("/Voie")
-    public List<Urgence> getAllVoie() {
-        return adminSIService.getAllUrgences();
+    public List<VoieExpedition> getAllVoie() {
+        return adminSIService.getAllVoie();
     }
 
+
     @PostMapping("/Voie")
-    public ResponseEntity<String> addVoie(@RequestBody Urgence u) {
-        boolean ok = adminSIService.addUrgence(u);
-        return ok ? ResponseEntity.ok("Urgence ajoutée")
-                : ResponseEntity.status(400).body("Erreur ajout urgence");
+    public ResponseEntity<?> addVoie(@RequestBody VoieExpedition voie) {
+        voie.setDateCreation(Timestamp.valueOf(LocalDateTime.now())); // ✅ conversion correcte
+        VoieExpedition saved = voieRepository.save(voie);
+        return ResponseEntity.ok(saved);
     }
+
 
     @GetMapping("/urgences")
     public List<Urgence> getUrgences() {
@@ -314,10 +328,12 @@ public class AdminBCController {
 
     @PostMapping("/confidentialites")
     public ResponseEntity<String> addConfidentialite(@RequestBody Confidentialite c) {
+        c.setDateCreation(new Timestamp(System.currentTimeMillis())); // impose toujours la date côté backend
         boolean ok = adminSIService.addConfidentialite(c);
         return ok ? ResponseEntity.ok("Confidentialité ajoutée")
                 : ResponseEntity.status(400).body("Erreur ajout confidentialité");
     }
+
     @PutMapping("/delete/urgence/{id}")
     public ResponseEntity<?> softDeleteUrgence(@PathVariable Long id) {
         return urgenceRepository.findById(id).map(urgence -> {
@@ -376,13 +392,14 @@ public class AdminBCController {
         }).orElse(ResponseEntity.notFound().build());
     }
     @PutMapping("/voiexpedition/update/{id}")
-    public ResponseEntity<?> updatevoie(@PathVariable Long id,@PathVariable String nom) {
+    public ResponseEntity<?> updatevoie(@PathVariable Long id, @RequestParam String nom) {
         return voieRepository.findById(id).map(svc -> {
             svc.setNom(nom);
             voieRepository.save(svc);
-            return ResponseEntity.ok("restoré");
+            return ResponseEntity.ok("modifié");
         }).orElse(ResponseEntity.notFound().build());
     }
+
     @PutMapping("/voiexpedition/delete/{id}")
     public ResponseEntity<?> deletevoie(@PathVariable Long id) {
         return voieRepository.findById(id).map(svc -> {

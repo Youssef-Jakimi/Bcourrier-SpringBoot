@@ -20,4 +20,5 @@ public class Confidentialite {
 
     private Timestamp dateCreation;
     private LocalDateTime dateSuppression;
+
 }
