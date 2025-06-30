@@ -134,7 +134,7 @@ public class ResponsableSVCService {
                     dto.setDateRegistre(courrier.getDateRegistre() != null ? courrier.getDateRegistre().toString() : null);
                     dto.setArchiver(courrier.isArchiver());
                     dto.setSignataire(courrier.getSignataire());
-                    dto.setUrgence(courrier.getUrgence().toString());
+                    dto.setUrgence(courrier.getUrgence().getNom());
 
                     // Set the list of possible statuses
                     dto.setStatusCourrierList(Arrays.asList(StatutCourrier.values()));
@@ -161,7 +161,6 @@ public class ResponsableSVCService {
                     dto.setDateRegistre(courrier.getDateRegistre() != null ? courrier.getDateRegistre().toString() : null);
                     dto.setArchiver(courrier.isArchiver());
                     dto.setSignataire(courrier.getSignataire());
-                    dto.setUrgence(courrier.getUrgence().toString());
 
                     // Set the list of possible statuses
                     dto.setStatusCourrierList(Arrays.asList(StatutCourrier.values()));
@@ -186,7 +185,7 @@ public class ResponsableSVCService {
                     dto.setDateRegistre(courrier.getDateRegistre() != null ? courrier.getDateRegistre().toString() : null);
                     dto.setArchiver(courrier.isArchiver());
                     dto.setSignataire(courrier.getSignataire());
-                    dto.setUrgence(courrier.getUrgence().toString());
+                    dto.setUrgence(courrier.getUrgence().getNom());
 
                     // Set the list of possible statuses
                     dto.setStatusCourrierList(Arrays.asList(StatutCourrier.values()));
@@ -210,7 +209,6 @@ public class ResponsableSVCService {
                     dto.setDateRegistre(courrier.getDateRegistre() != null ? courrier.getDateRegistre().toString() : null);
                     dto.setArchiver(courrier.isArchiver());
                     dto.setSignataire(courrier.getSignataire());
-                    dto.setUrgence(courrier.getUrgence().toString());
 
                     // Set the list of possible statuses
                     dto.setStatusCourrierList(Arrays.asList(StatutCourrier.values()));
@@ -256,7 +254,6 @@ public class ResponsableSVCService {
          if (newStatut == StatutCourrier.TRAITE) {
              courriersvc.setDateFinExecution(LocalDate.now());
              courrier.setDateTraitement(LocalDate.now());
-             courrier.setArchiver(true);
         }
         if (newStatut == StatutCourrier.EN_COURS) {
             courriersvc.setDateConsultation(LocalDate.now());

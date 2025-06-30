@@ -24,6 +24,7 @@ public class AdminSIService {
     @Autowired
     private final EmployeRepository employeRepository;
     private final QuestionRepository questionRepository;
+    private final VoieRepository voieRepository;
 
     @Autowired
     private final  UrgenceRepository urgenceRepository;
@@ -144,6 +145,15 @@ public class AdminSIService {
     public boolean addUrgence(Urgence u) {
         if (u.getNom() == null || u.getNom().isBlank()) return false;
         urgenceRepository.save(u);
+        return true;
+    }
+    // --- Voie ---
+    public List<Urgence> getAllVoie() {
+        return urgenceRepository.findAll();
+    }
+    public boolean addVoie(VoieExpedition u) {
+        if (u.getNom() == null || u.getNom().isBlank()) return false;
+        voieRepository.save(u);
         return true;
     }
 

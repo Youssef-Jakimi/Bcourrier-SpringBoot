@@ -3,6 +3,7 @@ package com.courrier.Bcourrier.Entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 @Data
 
@@ -18,7 +19,7 @@ public class Depart {
     private String nomExpediteur;
 
     @Column(name = "date_expedition", nullable = false)
-    private Date dateExpedition;
+    private LocalDate dateExpedition;
 
 
     @ManyToOne

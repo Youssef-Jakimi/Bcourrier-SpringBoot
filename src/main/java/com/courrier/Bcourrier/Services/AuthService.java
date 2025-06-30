@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,6 +44,7 @@ public class AuthService {
         employe.setNom(request.getNom());
         employe.setPrenom(request.getPrenom());
         employe.setTelephone(request.getTelephone());
+        employe.setDateCreation(LocalDateTime.now());
         employe.setCheckEmail(false);
         employe.setActive(false);
 

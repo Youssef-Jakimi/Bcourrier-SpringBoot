@@ -85,6 +85,19 @@ public class AdminSIController {
         boolean ok = adminSIService.addUrgence(u);
         return ok ? ResponseEntity.ok("Urgence ajoutée")
                 : ResponseEntity.status(400).body("Erreur ajout urgence");
+
+    }
+    // --- VOIE ---
+    @GetMapping("/Voie")
+    public List<Urgence> getAllVoie() {
+        return adminSIService.getAllUrgences();
+    }
+
+    @PostMapping("/Voie")
+    public ResponseEntity<String> addVoie(@RequestBody Urgence u) {
+        boolean ok = adminSIService.addUrgence(u);
+        return ok ? ResponseEntity.ok("Urgence ajoutée")
+                : ResponseEntity.status(400).body("Erreur ajout urgence");
     }
 
     // --- ROLE ---
@@ -113,6 +126,8 @@ public class AdminSIController {
                 : ResponseEntity.status(400).body("Erreur ajout confidentialité");
     }
 
+
+
     @PutMapping("/service/{id}/delete")
     public ResponseEntity<?> softDeleteServiceIntern(@PathVariable Long id) {
         return serviceInternRepository.findById(id).map(service -> {
@@ -127,9 +142,10 @@ public class AdminSIController {
         return urgenceRepository.findById(id).map(urgence -> {
             urgence.setDateSuppression(LocalDateTime.now());
             urgenceRepository.save(urgence);
-            return ResponseEntity.ok("Marked as deleted (dateImpression set)");
+            return ResponseEntity.ok("Marked as deleted");
         }).orElse(ResponseEntity.notFound().build());
     }
+
 
     @PutMapping("/delete/role/{id}")
     public ResponseEntity<?> softDeleteRole(@PathVariable Long id) {
@@ -148,16 +164,16 @@ public class AdminSIController {
             return ResponseEntity.ok("Marked as deleted (dateImpression set)");
         }).orElse(ResponseEntity.notFound().build());
     }
-    @PutMapping("/service/restore/(id)")
+    @PutMapping("/services/restore/{id}")
     public ResponseEntity<?> restoreservice(@PathVariable Long id) {
         return serviceInternRepository.findById(id).map(svc -> {
             svc.setDateSuppression(null);
             serviceInternRepository.save(svc);
-            return ResponseEntity.ok("restoré");
+            return ResponseEntity.ok("restauré");
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/urgence/restore/(id)")
+    @PutMapping("/urgence/restore/{id}")
     public ResponseEntity<?> restoreurgence(@PathVariable Long id) {
         return urgenceRepository.findById(id).map(svc -> {
             svc.setDateSuppression(null);
@@ -166,7 +182,7 @@ public class AdminSIController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/role/restore/(id)")
+    @PutMapping("/role/restore/{id}")
     public ResponseEntity<?> restorerole(@PathVariable Long id) {
         return roleRepository.findById(id).map(svc -> {
             svc.setDateSuppression(null);
@@ -175,7 +191,7 @@ public class AdminSIController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/voiexpedition/restore/(id)")
+    @PutMapping("/voiexpedition/restore/{id}")
     public ResponseEntity<?> restorevoie(@PathVariable Long id) {
         return voieRepository.findById(id).map(svc -> {
             svc.setDateSuppression(null);
@@ -183,7 +199,7 @@ public class AdminSIController {
             return ResponseEntity.ok("restoré");
         }).orElse(ResponseEntity.notFound().build());
     }
-    @PutMapping("/confidentialite/restore/(id)")
+    @PutMapping("/confidentialite/restore/{id}")
     public ResponseEntity<?> restoreconfidentialite(@PathVariable Long id) {
         return confidentialiteRepository.findById(id).map(svc -> {
             svc.setDateSuppression(null);
@@ -192,34 +208,37 @@ public class AdminSIController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/service/update/(id)")
-    public ResponseEntity<?> updateservice(@PathVariable Long id,@PathVariable String nom ) {
+    @PutMapping("/service/update/{id}")
+    public ResponseEntity<?> updateService(@PathVariable Long id, @RequestParam String nom) {
         return serviceInternRepository.findById(id).map(svc -> {
             svc.setNom(nom);
             serviceInternRepository.save(svc);
-            return ResponseEntity.ok("restoré");
+            return ResponseEntity.ok("modifié");
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/urgence/update/(id)")
-    public ResponseEntity<?> updateurgence(@PathVariable Long id,@PathVariable String nom) {
+
+    @PutMapping("/urgence/update/{id}")
+    public ResponseEntity<?> updateurgence(@PathVariable Long id, @RequestParam String nom) {
         return urgenceRepository.findById(id).map(svc -> {
             svc.setNom(nom);
             urgenceRepository.save(svc);
-            return ResponseEntity.ok("restoré");
+            return ResponseEntity.ok("modifié");
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/role/update/(id)")
-    public ResponseEntity<?> updaterole(@PathVariable Long id,@PathVariable String nom) {
-        return roleRepository.findById(id).map(svc -> {
-            svc.setNom(nom);
-            roleRepository.save(svc);
-            return ResponseEntity.ok("restoré");
+
+    @PutMapping("/role/update/{id}")
+    public ResponseEntity<?> updaterole(@PathVariable Long id, @RequestParam String nom) {
+        return roleRepository.findById(id).map(role -> {
+            role.setNom(nom);
+            roleRepository.save(role);
+            return ResponseEntity.ok("modifié");
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/voiexpedition/update/(id)")
+
+    @PutMapping("/voiexpedition/update/{id}")
     public ResponseEntity<?> updatevoie(@PathVariable Long id,@PathVariable String nom) {
         return voieRepository.findById(id).map(svc -> {
             svc.setNom(nom);
@@ -227,14 +246,23 @@ public class AdminSIController {
             return ResponseEntity.ok("restoré");
         }).orElse(ResponseEntity.notFound().build());
     }
-    @PutMapping("/confidentialite/update/(id)")
-    public ResponseEntity<?> updateconfidentialite(@PathVariable Long id,@PathVariable String nom) {
-        return confidentialiteRepository.findById(id).map(svc -> {
-            svc.setNom(nom);
-            confidentialiteRepository.save(svc);
+    @PutMapping("/voiexpedition/delete/{id}")
+    public ResponseEntity<?> deletevoie(@PathVariable Long id) {
+        return voieRepository.findById(id).map(svc -> {
+            svc.setDateSuppression(LocalDateTime.now());
+            voieRepository.save(svc);
             return ResponseEntity.ok("restoré");
         }).orElse(ResponseEntity.notFound().build());
     }
+    @PutMapping("/confidentialite/update/{id}")
+    public ResponseEntity<?> updateconfidentialite(@PathVariable Long id, @RequestParam String nom) {
+        return confidentialiteRepository.findById(id).map(svc -> {
+            svc.setNom(nom);
+            confidentialiteRepository.save(svc);
+            return ResponseEntity.ok("modifié");
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
 
     @PostMapping("/question/ajouter")
     public boolean ajouterquestion(@PathVariable String question) {
@@ -249,7 +277,7 @@ public class AdminSIController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/question/delete/(id)")
+    @PutMapping("/question/delete/{id}")
     public ResponseEntity<?> deletequestion(@PathVariable Long id,@PathVariable String nom) {
         return questionRepository.findById(id).map(svc -> {
             svc.setDateSuppression(LocalDateTime.now());
@@ -257,7 +285,7 @@ public class AdminSIController {
             return ResponseEntity.ok("supprimé");
         }).orElse(ResponseEntity.notFound().build());
     }
-    @PutMapping("/question/restore/(id)")
+    @PutMapping("/question/restore/{id}")
     public ResponseEntity<?> restorequestion(@PathVariable Long id,@PathVariable String nom) {
         return questionRepository.findById(id).map(svc -> {
             svc.setDateSuppression(null);

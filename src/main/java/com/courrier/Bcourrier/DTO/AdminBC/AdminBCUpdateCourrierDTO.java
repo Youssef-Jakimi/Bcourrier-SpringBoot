@@ -6,6 +6,6 @@ import lombok.Data;
 public class AdminBCUpdateCourrierDTO {
     private int courrierId;
     private Long serviceId;
-    private String urgence;           // e.g., "URGENT", "NORMAL"
-    private String confidentialite;   // e.g., "SECRET", "ROUTINE"
+    private Long urgence;           // e.g., "URGENT", "NORMAL"
+    private Long confidentialite;   // e.g., "SECRET", "ROUTINE"
 }
