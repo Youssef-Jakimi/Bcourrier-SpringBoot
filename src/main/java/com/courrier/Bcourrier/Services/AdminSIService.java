@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -148,13 +149,17 @@ public class AdminSIService {
         return true;
     }
     // --- Voie ---
-    public List<Urgence> getAllVoie() {
-        return urgenceRepository.findAll();
+    public List<VoieExpedition> getAllVoie() {
+        return voieRepository.findAll();
     }
     public boolean addVoie(VoieExpedition u) {
         if (u.getNom() == null || u.getNom().isBlank()) return false;
         voieRepository.save(u);
         return true;
+    }
+
+    public List<Question> getAllQuestion() {
+        return questionRepository.findAll();
     }
 
     // --- ROLE ---

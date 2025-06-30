@@ -1,9 +1,6 @@
 package com.courrier.Bcourrier.DTO.AdminBC;
 
-import com.courrier.Bcourrier.Entities.Confidentialite;
-import com.courrier.Bcourrier.Entities.Employe;
-import com.courrier.Bcourrier.Entities.ServiceIntern;
-import com.courrier.Bcourrier.Entities.Urgence;
+import com.courrier.Bcourrier.Entities.*;
 import lombok.Data;
 
 import java.util.List;
@@ -15,5 +12,6 @@ public class AjouterDTO {
     private List<ServiceIntern> services;
     private List<EmployeDTO> employes;
     private List<Integer> numRegister;
+    private List<VoieExpedition> voieExpeditions;
 
 }

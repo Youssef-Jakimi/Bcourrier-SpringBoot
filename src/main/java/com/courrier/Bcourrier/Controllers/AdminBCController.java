@@ -94,6 +94,7 @@ public class AdminBCController {
         dto.setUrgences(urgenceRepository.findAll());
         dto.setConfidentialites(confidentialiteRepository.findAll());
         dto.setServices(serviceInternRepository.findAll());
+        dto.setVoieExpeditions(voieRepository.findAll());
 
         List<EmployeDTO> employeDTOs = employeRepository.findAll().stream()
                 .map(e -> new EmployeDTO(e.getId(), e.getNom(), e.getPrenom()))
@@ -284,15 +285,15 @@ public class AdminBCController {
 
     // --- VOIE ---
     @GetMapping("/Voie")
-    public List<Urgence> getAllVoie() {
-        return adminSIService.getAllUrgences();
+    public List<VoieExpedition> getAllVoie() {
+        return adminSIService.getAllVoie();
     }
 
     @PostMapping("/Voie")
-    public ResponseEntity<String> addVoie(@RequestBody Urgence u) {
-        boolean ok = adminSIService.addUrgence(u);
+    public ResponseEntity<String> addVoie(@RequestBody VoieExpedition u) {
+        boolean ok = adminSIService.addVoie(u);
         return ok ? ResponseEntity.ok("Urgence ajoutée")
-                : ResponseEntity.status(400).body("Erreur ajout urgence");
+                : ResponseEntity.status(400).body("Erreur ajout Voie expedition");
     }
 
     @GetMapping("/urgences")

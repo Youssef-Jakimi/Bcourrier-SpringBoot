@@ -4,10 +4,7 @@ import com.courrier.Bcourrier.DTO.AdminSI.AdminSICreateServiceDTO;
 import com.courrier.Bcourrier.DTO.AdminSI.AdminSIDashboardDTO;
 import com.courrier.Bcourrier.DTO.AdminSI.AdminSIModifyUserDTO;
 import com.courrier.Bcourrier.DTO.AdminSI.AdminSIUserDTO;
-import com.courrier.Bcourrier.Entities.Confidentialite;
-import com.courrier.Bcourrier.Entities.Role;
-import com.courrier.Bcourrier.Entities.ServiceIntern;
-import com.courrier.Bcourrier.Entities.Urgence;
+import com.courrier.Bcourrier.Entities.*;
 import com.courrier.Bcourrier.Repositories.*;
 import com.courrier.Bcourrier.Services.AdminSIService;
 import lombok.RequiredArgsConstructor;
@@ -87,17 +84,16 @@ public class AdminSIController {
                 : ResponseEntity.status(400).body("Erreur ajout urgence");
 
     }
-    // --- VOIE ---
     @GetMapping("/Voie")
-    public List<Urgence> getAllVoie() {
-        return adminSIService.getAllUrgences();
+    public List<VoieExpedition> getAllVoie() {
+        return adminSIService.getAllVoie();
     }
 
     @PostMapping("/Voie")
-    public ResponseEntity<String> addVoie(@RequestBody Urgence u) {
-        boolean ok = adminSIService.addUrgence(u);
-        return ok ? ResponseEntity.ok("Urgence ajoutée")
-                : ResponseEntity.status(400).body("Erreur ajout urgence");
+    public ResponseEntity<String> addVoie(@RequestBody VoieExpedition u) {
+        boolean ok = adminSIService.addVoie(u);
+        return ok ? ResponseEntity.ok("Voie ajoutée")
+                : ResponseEntity.status(400).body("Erreur ajout Voie expedition");
     }
 
     // --- ROLE ---
@@ -237,6 +233,10 @@ public class AdminSIController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/question")
+    public List<Question> getQuestion() {
+        return adminSIService.getAllQuestion();
+    }
 
     @PutMapping("/voiexpedition/update/{id}")
     public ResponseEntity<?> updatevoie(@PathVariable Long id,@PathVariable String nom) {

@@ -2,6 +2,7 @@ package com.courrier.Bcourrier.Services;
 
 import com.courrier.Bcourrier.DTO.AdminBC.*;
 import com.courrier.Bcourrier.Entities.*;
+import com.courrier.Bcourrier.Enums.StatutCourrier;
 import com.courrier.Bcourrier.Enums.TypeCourrier;
 import com.courrier.Bcourrier.Repositories.*;
 import lombok.RequiredArgsConstructor;
@@ -171,6 +172,7 @@ public class AdminBcService {
         courrier.setType(TypeCourrier.ARRIVEE);
         courrier.setAttachmentPath(filePath);
         courrier.setService(service.get());
+        courrier.setStatutCourrier(StatutCourrier.ENREGISTRE);
         courrier.setDateArrive(dateArrive);
         courrier.setDateRegistre(dateEnregistre);
         if (reponseCourrier != null) {
