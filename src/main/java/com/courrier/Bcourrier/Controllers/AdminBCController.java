@@ -5,6 +5,7 @@ import com.courrier.Bcourrier.Entities.Confidentialite;
 import com.courrier.Bcourrier.Entities.Courrier;
 import com.courrier.Bcourrier.Entities.Urgence;
 import com.courrier.Bcourrier.Entities.VoieExpedition;
+import com.courrier.Bcourrier.Enums.StatutCourrier;
 import com.courrier.Bcourrier.Enums.TypeCourrier;
 import com.courrier.Bcourrier.Repositories.*;
 import com.courrier.Bcourrier.Services.AdminBcService;
@@ -413,6 +414,7 @@ public class AdminBCController {
     public ResponseEntity<?> archiverCourrier(@PathVariable int id) {
         return courrierRepository.findById(id).map(svc -> {
             svc.setArchiver(true);
+            svc.setStatutCourrier(StatutCourrier.TRAITE);
             courrierRepository.save(svc);
             return ResponseEntity.ok("archivé");
         }).orElse(ResponseEntity.notFound().build());

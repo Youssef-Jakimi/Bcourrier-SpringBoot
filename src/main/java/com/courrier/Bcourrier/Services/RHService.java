@@ -68,7 +68,7 @@ public class RHService {
             dto.setFullName(emp.getPrenom() + " " + emp.getNom());
             dto.setEmail(emp.getEmail());
             dto.setLogin(emp.getLogin());
-            dto.setRole(emp.getRole() != null ? emp.getRole().toString() : null);
+            dto.setRole(emp.getRole() != null ? emp.getRole().getNom() : null);
             dto.setService(emp.getService() != null ? emp.getService().getNom() : null);
             dto.setActive(emp.isActive());
             // Fetch earliest affectation date for this employee

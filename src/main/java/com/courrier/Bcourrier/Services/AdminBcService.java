@@ -180,6 +180,12 @@ public class AdminBcService {
         }
         if (employesible != null) {
             courrier.setEmploye(employesible);
+            AffectationCourrierEmploye courrierEmploye = new AffectationCourrierEmploye();
+            courrierEmploye.setCourrier(courrier);
+            courrierEmploye.setEmploye(employesible);
+            courrierEmploye.setDateAffection(today);
+            courrierEmploye.setHeureAffectation(LocalTime.now().toString());
+            affectationCourrierEmployeRepository.save(courrierEmploye);
         }
         courrierRepository.save(courrier);
 
