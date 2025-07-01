@@ -134,6 +134,7 @@ public class ResponsableSVCService {
                     dto.setDateRegistre(courrier.getDateRegistre() != null ? courrier.getDateRegistre().toString() : null);
                     dto.setArchiver(courrier.isArchiver());
                     dto.setSignataire(courrier.getSignataire());
+                    dto.setStatus(courrier.getStatutCourrier().toString());
                     dto.setUrgence(courrier.getUrgence().getNom());
 
                     // Set the list of possible statuses
@@ -160,6 +161,7 @@ public class ResponsableSVCService {
                     dto.setDateArrive(courrier.getDateArrive() != null ? courrier.getDateArrive().toString() : null);
                     dto.setDateRegistre(courrier.getDateRegistre() != null ? courrier.getDateRegistre().toString() : null);
                     dto.setArchiver(courrier.isArchiver());
+                    dto.setStatus(courrier.getStatutCourrier().toString());
                     dto.setSignataire(courrier.getSignataire());
 
                     // Set the list of possible statuses
@@ -185,6 +187,7 @@ public class ResponsableSVCService {
                     dto.setDateRegistre(courrier.getDateRegistre() != null ? courrier.getDateRegistre().toString() : null);
                     dto.setArchiver(courrier.isArchiver());
                     dto.setSignataire(courrier.getSignataire());
+                    dto.setStatus(courrier.getStatutCourrier().toString());
                     dto.setUrgence(courrier.getUrgence().getNom());
 
                     // Set the list of possible statuses
@@ -208,6 +211,7 @@ public class ResponsableSVCService {
                     dto.setDateArrive(courrier.getDateArrive() != null ? courrier.getDateArrive().toString() : null);
                     dto.setDateRegistre(courrier.getDateRegistre() != null ? courrier.getDateRegistre().toString() : null);
                     dto.setArchiver(courrier.isArchiver());
+                    dto.setStatus(courrier.getStatutCourrier().toString());
                     dto.setSignataire(courrier.getSignataire());
 
                     // Set the list of possible statuses

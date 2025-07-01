@@ -17,6 +17,7 @@ public class CourrierSimpleDTO {
     private boolean archiver;
     private String signataire;
     private String urgence;
+    private String status;
     private List<StatutCourrier> statusCourrierList;
 }
 
