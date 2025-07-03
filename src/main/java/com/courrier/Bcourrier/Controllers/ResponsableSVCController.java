@@ -6,23 +6,35 @@ import com.courrier.Bcourrier.DTO.Profile.PreferencesDTO;
 import com.courrier.Bcourrier.DTO.ResposableSVC.CourrierSimpleDTO;
 import com.courrier.Bcourrier.DTO.ResposableSVC.CourrierStatusUpdateDTO;
 import com.courrier.Bcourrier.DTO.ResposableSVC.DashboardSVCDTO;
+import com.courrier.Bcourrier.Entities.AffectationCourrierService;
+import com.courrier.Bcourrier.Entities.Courrier;
+import com.courrier.Bcourrier.Enums.StatutCourrier;
+import com.courrier.Bcourrier.Repositories.AffectationCourrierServiceRepository;
+import com.courrier.Bcourrier.Repositories.CourrierRepository;
 import com.courrier.Bcourrier.Services.ProfilService;
 import com.courrier.Bcourrier.Services.ResponsableSVCService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 @Data
 @RestController
@@ -30,8 +42,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ResponsableSVCController {
     @Autowired
-    private ResponsableSVCService responsableSVCService;
-    private ProfilService profilService;
+    private final ResponsableSVCService responsableSVCService;
+    private final ProfilService profilService;
+    private final CourrierRepository courrierRepository;
+    private final AffectationCourrierServiceRepository affectationCourrierServiceRepository;
+
 
     // DASHBOARD BRIEF
     @GetMapping("/dashboard")
@@ -98,6 +113,73 @@ public class ResponsableSVCController {
 
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/courriers/{id}/download")
+    public ResponseEntity<org.springframework.core.io.Resource> downloadAttachment(@PathVariable int id) {
+        Courrier courrier = courrierRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        String attachmentPath = courrier.getAttachmentPath();
+        if (attachmentPath == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No attachment for this courrier.");
+        }
+        try {
+            Path file = Paths.get(attachmentPath).toAbsolutePath().normalize();
+            if (!java.nio.file.Files.exists(file)) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "File does not exist.");
+            }
+            org.springframework.core.io.Resource resource = new UrlResource(file.toUri());
+            if (!resource.exists() || !resource.isReadable()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found or not readable.");
+            }
+            if(courrier.getStatutCourrier() == StatutCourrier.ENREGISTRE){
+                courrier.setStatutCourrier(StatutCourrier.EN_COURS);
+                AffectationCourrierService affectation = affectationCourrierServiceRepository.findByCourrier_id(courrier.getId());
+                affectation.setDateConsultation(LocalDate.now());
+                affectation.setHeureConsultation(LocalTime.now().toString());
+                courrierRepository.save(courrier);
+                affectationCourrierServiceRepository.save(affectation);
+            }
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=\"" + file.getFileName().toString() + "\"")
+                    .body(resource);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to download file: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/courriers/{id}/view-pdf")
+    public ResponseEntity<Resource> viewPdfInline(@PathVariable int id) {
+        Courrier courrier = courrierRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        String attachmentPath = courrier.getAttachmentPath();
+        if (attachmentPath == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No attachment for this courrier.");
+        }
+        try {
+            Path file = Paths.get(attachmentPath).toAbsolutePath().normalize();
+            if (!java.nio.file.Files.exists(file)) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "File does not exist.");
+            }
+            Resource resource = new UrlResource(file.toUri());
+            if (!resource.exists() || !resource.isReadable()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found or not readable.");
+            }
+            if(courrier.getStatutCourrier() == StatutCourrier.ENREGISTRE){
+                courrier.setStatutCourrier(StatutCourrier.EN_COURS);
+                AffectationCourrierService affectation = affectationCourrierServiceRepository.findByCourrier_id(courrier.getId());
+                affectation.setDateConsultation(LocalDate.now());
+                affectation.setHeureConsultation(LocalTime.now().toString());
+                courrierRepository.save(courrier);
+                affectationCourrierServiceRepository.save(affectation);
+            }
+            return ResponseEntity.ok()
+                    .header("Content-Type", "application/pdf")
+                    .header("Content-Disposition", "inline; filename=\"" + file.getFileName().toString() + "\"")
+                    .body(resource);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to view file: " + e.getMessage());
         }
     }
 

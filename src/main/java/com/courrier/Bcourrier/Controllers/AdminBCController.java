@@ -73,6 +73,7 @@ public class AdminBCController {
             @RequestParam("service") Long serviceId,
             @RequestParam("dateArrive") LocalDate dateArrive,
             @RequestParam("dateEnregistre") LocalDate dateEnregistre,
+            @RequestParam(name = "dateLimit", required = false) LocalDate dateLimit,
             @RequestParam(name = "reponseAId", required = false) Integer reponseAId,
             @RequestParam(name = "reponseAId", required = false) Integer employe,
             @RequestParam("attachment") MultipartFile file) {
@@ -80,7 +81,7 @@ public class AdminBCController {
         try {
             courrierService.enregistrerCourrierArrivee(
                                 signataire,nature, objet, description, numeroRegistre,
-                                degreConfidentialite, urgence, dateArrive, dateEnregistre, reponseAId, serviceId,employe, file
+                                degreConfidentialite, urgence, dateArrive, dateEnregistre, dateLimit, reponseAId, serviceId,employe, file
                         );
             return ResponseEntity.ok("Courrier enregistré avec succès");
         } catch (Exception e) {
@@ -108,51 +109,7 @@ public class AdminBCController {
 
         return dto;
     }
-//    @GetMapping("/consulter-courrier/employe")
-//    public List<ConsulterCourrierEmployeDTO> getCourrierEmploye() {
-//        List<Courrier> courriers = courrierRepository.findByType(TypeCourrier.EMPLOYE);
-//
-//        return courriers.stream()
-//                .map(c -> new ConsulterCourrierEmployeDTO(
-//                        c.getId(),
-//                        c.getDateRegistre(),
-//                        c.getObject(),
-//                        c.getEmploye().getNom(),
-//                        c.getEmploye().getPrenom(),
-//                        c.getEmploye().getCin()
-//                ))
-//                .collect(Collectors.toList());
-//    }
 
-
-//    @PostMapping("/courrier/employe")
-//    public ResponseEntity<String> enregistrerCourrierEmploye(
-//            @RequestParam("objet") String objet,
-//            @RequestParam("description") String description,
-//            @RequestParam("numeroRegistre") int numeroRegistre,
-//            @RequestParam("employeId") Long employeId,
-//            @RequestParam("attachment") MultipartFile attachment,
-//            @RequestParam("dateArrive") LocalDate dateArrive,
-//            @RequestParam("dateEnregistre") LocalDate dateEnregistre,
-//            @RequestParam(name = "reponseAId", required = false) Integer reponseAId // 👈 NEW parameter
-//
-//    ) {
-//        try {
-//            adminBcService.enregistrerCourrierEmploye(
-//                    objet,
-//                    description,
-//                    numeroRegistre,
-//                    employeId,
-//                    attachment,
-//                    dateArrive,dateEnregistre,reponseAId
-//            );
-//            return ResponseEntity.ok("Courrier enregistré avec succès.");
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.badRequest().body("Erreur: " + e.getMessage());
-//        } catch (IOException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l’enregistrement du fichier.");
-//        }
-//    }
 
     @PostMapping("/admin/courriers/depart")
     public ResponseEntity<String> enregistrerCourrierDepart(

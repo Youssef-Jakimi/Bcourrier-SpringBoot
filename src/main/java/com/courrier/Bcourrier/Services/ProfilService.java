@@ -11,24 +11,34 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ProfilService {
     @Autowired
     private final EmployeRepository employeRepository;
+    private final EmailService emailService;
     @Autowired
     private final PasswordEncoder passwordEncoder;
     public boolean updatePersonalInfo(String login, PersonalInfoDTO dto) {
         Optional<Employe> opt = employeRepository.findByLogin(login);
         if (opt.isEmpty()) return false;
         Employe e = opt.get();
+        String oldemail = opt.get().getEmail();
         String[] parts = dto.getFullName().split(" ", 2);
         if (parts.length == 2) { e.setPrenom(parts[0]); e.setNom(parts[1]); }
-        e.setEmail(dto.getEmail());
+        if(!Objects.equals(oldemail, dto.getEmail())){
+            e.setEmail(dto.getEmail());
+            e.setCheckEmail(false);
+            String token = UUID.randomUUID().toString();
+            e.setVerificationToken(token);
+            String verificationLink = "http://localhost:4200/verify?token=" + token;
+            emailService.sendVerificationEmail(e.getEmail(), verificationLink);
+        }
         e.setTelephone(dto.getPhone());
-        // Optionally update service if you have logic for it
         employeRepository.save(e);
         return true;
     }

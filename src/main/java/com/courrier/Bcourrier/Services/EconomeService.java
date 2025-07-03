@@ -1,61 +1,58 @@
 package com.courrier.Bcourrier.Services;
 
-import com.courrier.Bcourrier.DTO.AdminBC.*;
-import com.courrier.Bcourrier.Entities.*;
-import com.courrier.Bcourrier.Enums.StatutCourrier;
+import com.courrier.Bcourrier.DTO.AdminBC.AdminBCDashboardDTO;
+import com.courrier.Bcourrier.DTO.AdminBC.CourrierArriveeDTO;
+import com.courrier.Bcourrier.DTO.AdminBC.CourrierDepartDTO;
+import com.courrier.Bcourrier.DTO.AdminBC.StatsDTO;
+import com.courrier.Bcourrier.Entities.Confidentialite;
+import com.courrier.Bcourrier.Entities.Courrier;
 import com.courrier.Bcourrier.Enums.TypeCourrier;
 import com.courrier.Bcourrier.Repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.time.*;
-import java.util.*;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
-public class AdminBcService {
+public class EconomeService {
     @Autowired
-    private final AdminBcRepository adminBcRepository;
+    private final DelegueRepository delegueRepository;
     private final EmployeRepository employeRepository;
-    private final UrgenceRepository urgenceRepository;
-    private final AffectationCourrierServiceRepository affectationCourrierServiceRepository;
-    private final AffectationCourrierEmployeRepository affectationCourrierEmployeRepository;
     private final ConfidentialiteRepository confidentialiteRepository;
     @Autowired
     private final DepartRepository departRepository;
     @Autowired
-    private CourrierRepository courrierRepository;
+    private final CourrierRepository courrierRepository;
     @Autowired
-    private ServiceInternRepository serviceInternRepository;
-
+    private final ServiceInternRepository serviceInternRepository;
 
     public AdminBCDashboardDTO getAdminDashboardData() {
         AdminBCDashboardDTO dto = new AdminBCDashboardDTO();
 
         // ─── Totals ───
         dto.setTotalCourriersArrivee(
-                adminBcRepository.countByTypeAndArchiverFalse(TypeCourrier.ARRIVEE)
+                delegueRepository.countByTypeAndArchiverFalse(TypeCourrier.ARRIVEE)
         );
         dto.setTotalCourriersDepart(
-                adminBcRepository.countByTypeAndArchiverFalse(TypeCourrier.DEPART)
+                delegueRepository.countByTypeAndArchiverFalse(TypeCourrier.DEPART)
         );
         dto.setTotalArriveeArchives(
-                adminBcRepository.countByTypeAndArchiverTrue(TypeCourrier.ARRIVEE)
+                delegueRepository.countByTypeAndArchiverTrue(TypeCourrier.ARRIVEE)
         );
         dto.setTotalDepartArchives(
-                adminBcRepository.countByTypeAndArchiverTrue(TypeCourrier.DEPART)
+                delegueRepository.countByTypeAndArchiverTrue(TypeCourrier.DEPART)
         );
 
         // ─── Last 3 courriers ───
-        List<Map<String, Object>> last3 = adminBcRepository.findTop3ByOrderByDateRegistreDesc()
+        List<Map<String, Object>> last3 = delegueRepository.findTop3ByOrderByDateRegistreDesc()
                 .stream()
                 .map(c -> {
                     Map<String, Object> map = new HashMap<>();
@@ -123,173 +120,17 @@ public class AdminBcService {
         return dto;
     }
 
-
-    public void enregistrerCourrierArrivee(
-            String signataire,
-            String nature,
-            String objet,
-            String description,
-            int numeroRegistre,
-            Confidentialite degreConfidentialite,
-            Urgence urgence,
-            LocalDate dateArrive,
-            LocalDate dateEnregistre,
-            LocalDate dateLimit,
-            Integer reponseAId,
-            Long serviceId,
-            Integer employe,
-            MultipartFile file
-    ) throws IOException {
-        LocalDate today = LocalDate.now();
-        Optional<ServiceIntern> service = serviceInternRepository.findById(serviceId);
-        if (service.isEmpty()) throw new IllegalArgumentException("Service cible introuvable");
-        Courrier reponseCourrier = null;
-        if (reponseAId != null) {
-            reponseCourrier = courrierRepository.findById(reponseAId)
-                    .orElseThrow(() -> new IllegalArgumentException("Courrier source introuvable"));
-        }
-        Employe employesible = null;
-        if (employe != null) {
-            employesible = employeRepository.findById(Long.valueOf(employe))
-                    .orElseThrow(() -> new IllegalArgumentException("employe introuvable"));
-        }
-        String uploadsDir = "./uploads/courriers"; // No leading slash
-        String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
-        String filePath = uploadsDir + UUID.randomUUID() + "_" + originalFilename;
-
-        Path path = Paths.get(filePath);
-        Files.createDirectories(path.getParent());
-        Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-        Courrier courrier = new Courrier();
-        courrier.setSignataire(signataire);
-        courrier.setNature(nature);
-        courrier.setObject(objet);
-        courrier.setDescription(description);
-        courrier.setDateArrive(today);
-        courrier.setDateRegistre(today);
-        courrier.setNumeroRegistre(numeroRegistre);
-        courrier.setDegreConfiden(degreConfidentialite);
-        courrier.setUrgence(urgence);
-        courrier.setType(TypeCourrier.ARRIVEE);
-        courrier.setAttachmentPath(filePath);
-        courrier.setService(service.get());
-        courrier.setStatutCourrier(StatutCourrier.ENREGISTRE);
-        courrier.setDateArrive(dateArrive);
-        courrier.setDateRegistre(dateEnregistre);
-        if (reponseCourrier != null) {
-            courrier.setReponseA(reponseCourrier);
-        }
-        if (employesible != null) {
-            courrier.setEmploye(employesible);
-            AffectationCourrierEmploye courrierEmploye = new AffectationCourrierEmploye();
-            courrierEmploye.setCourrier(courrier);
-            courrierEmploye.setEmploye(employesible);
-            courrierEmploye.setDateAffection(today);
-            courrierEmploye.setHeureAffectation(LocalTime.now().toString());
-            affectationCourrierEmployeRepository.save(courrierEmploye);
-        }
-        courrierRepository.save(courrier);
-
-        // 👇 Now create the affectation entry
-        AffectationCourrierService affectation = new AffectationCourrierService();
-        affectation.setCourrier(courrier);
-        affectation.setService(serviceInternRepository.findById(serviceId).orElseThrow());
-        affectation.setDateAffection(today);
-        affectation.setDateFinExecution(dateLimit);
-        affectation.setHeureAffectation(LocalTime.now().toString());
-        affectation.setTypeAffectation("Automatique");
-
-        affectationCourrierServiceRepository.save(affectation);
-        System.out.println("Saved courrier");
-    }
-
-
-    public void enregistrerCourrierDepart(
-            String objet,
-            String nature,
-            String description,
-            Confidentialite degreConfidentialite,
-            Urgence urgence,
-            int numeroRegistre,
-            Long serviceId,
-            MultipartFile attachment,
-            String nomExpediteur,
-            VoieExpedition voieExpedition,
-            LocalDate dateDepart,
-            LocalDate dateRegistre,
-            Integer reponseAId // 👈 New parameter
-
-
-    ) throws IOException {
-        Optional<ServiceIntern> serviceOpt = serviceInternRepository.findById(serviceId);
-        if (serviceOpt.isEmpty()) {
-            throw new IllegalArgumentException("Service cible introuvable");
-        }
-        Courrier reponseCourrier = null;
-        if (reponseAId != null) {
-            reponseCourrier = courrierRepository.findById(reponseAId)
-                    .orElseThrow(() -> new IllegalArgumentException("Courrier source introuvable"));
-        }
-        String uploadsDir = "./uploads/courriers";
-        String originalFilename = StringUtils.cleanPath(attachment.getOriginalFilename());
-        String filePath = uploadsDir + UUID.randomUUID() + "_" + originalFilename;
-        Path path = Paths.get(filePath);
-        Files.createDirectories(path.getParent());
-        Files.copy(attachment.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-
-        Courrier courrier = new Courrier();
-        courrier.setObject(objet);
-        courrier.setNature(nature);
-        courrier.setDescription(description);
-        courrier.setDegreConfiden(degreConfidentialite);
-        courrier.setUrgence(urgence);
-        courrier.setNumeroRegistre(numeroRegistre);
-        courrier.setAttachmentPath(filePath);
-        courrier.setService(serviceOpt.get());
-        courrier.setType(TypeCourrier.DEPART);
-
-        // 👇 Link response if available
-        if (reponseCourrier != null) {
-            courrier.setReponseA(reponseCourrier);
-        }
-
-        // ✅ Use provided dates
-        courrier.setDateRegistre(dateRegistre);
-
-        courrierRepository.save(courrier);
-
-        Depart depart = new Depart();
-        depart.setNomExpediteur(nomExpediteur);
-        depart.setVoieExpedition(voieExpedition);
-        depart.setDateExpedition(dateDepart);
-        depart.setCourrier(courrier);
-        departRepository.save(depart);
-
-        AffectationCourrierService affectation = new AffectationCourrierService();
-        affectation.setCourrier(courrier);
-        affectation.setService(serviceOpt.get());
-        affectation.setDateAffection(LocalDate.now());
-        affectation.setHeureAffectation(LocalTime.now().toString());
-
-        affectationCourrierServiceRepository.save(affectation);
-    }
-
-
-
-
-    public CourrierArriveeResponseDTO getAllArriveeCourrierDTOs() {
-        CourrierArriveeResponseDTO resp = new CourrierArriveeResponseDTO();
-
-        List<CourrierArriveeDTO> courriers = courrierRepository.findByType(TypeCourrier.ARRIVEE)
+    public List<CourrierArriveeDTO> getAllArriveeCourrierDTOs() {
+        return courrierRepository.findByType(TypeCourrier.ARRIVEE)
                 .stream()
                 .map(c -> {
                     CourrierArriveeDTO dto = new CourrierArriveeDTO();
                     dto.setId(c.getId());
                     dto.setObject(c.getObject());
                     dto.setDescription(c.getDescription());
+                    dto.setStatutCourrier(String.valueOf(c.getStatutCourrier()));
                     dto.setDateArrive(c.getDateArrive() != null ? c.getDateArrive().toString() : null);
                     dto.setDateTraitement(c.getDateTraitement() != null ? c.getDateTraitement().toString() : null);
-                    dto.setStatutCourrier(c.getStatutCourrier() != null ? c.getStatutCourrier().toString() : null);
                     dto.setNumeroRegistre(c.getNumeroRegistre());
                     dto.setDateRegistre(c.getDateRegistre() != null ? c.getDateRegistre().toString() : null);
                     dto.setSignataire(c.getSignataire());
@@ -303,28 +144,20 @@ public class AdminBcService {
                     return dto;
                 })
                 .toList();
-
-        resp.setCourriers(courriers);
-        resp.setServices(serviceInternRepository.findAll());
-        resp.setUrgences(urgenceRepository.findAll());
-        resp.setConfidentialites(confidentialiteRepository.findAll());
-        return resp;
     }
 
-    public CourrierDepartResponseDTO getAllDepartCourrierDTOs() {
-        CourrierDepartResponseDTO resp = new CourrierDepartResponseDTO();
-
-        List<CourrierDepartDTO> courriers = departRepository.findAll()
+    public List<CourrierDepartDTO> getAllDepartCourrierDTOs() {
+        return departRepository.findAll()
                 .stream()
                 .map(d -> {
                     CourrierDepartDTO dto = new CourrierDepartDTO();
                     dto.setId(d.getId());
                     dto.setObject(d.getCourrier().getObject());
                     dto.setDescription(d.getCourrier().getDescription());
+                    dto.setStatutCourrier(String.valueOf(d.getCourrier().getStatutCourrier()));
                     dto.setDateDepart(d.getCourrier().getDateRegistre() != null ? d.getCourrier().getDateRegistre().toString() : null);
                     dto.setNumeroRegistre(d.getCourrier().getNumeroRegistre());
                     dto.setArchiver(d.getCourrier().isArchiver());
-                    dto.setStatutCourrier(d.getCourrier().getStatutCourrier() != null ? d.getCourrier().getStatutCourrier().toString() : null);
                     dto.setService(d.getCourrier().getService() != null ? d.getCourrier().getService().getNom() : null);
                     dto.setEmploye(d.getCourrier().getEmploye() != null ? d.getCourrier().getEmploye().getPrenom() + " " + d.getCourrier().getEmploye().getNom() : null);
                     dto.setNomExpediteur(d.getNomExpediteur());
@@ -336,15 +169,7 @@ public class AdminBcService {
                     return dto;
                 })
                 .toList();
-
-        resp.setCourriers(courriers);
-        resp.setServices(serviceInternRepository.findAll());
-        resp.setUrgences(urgenceRepository.findAll());
-        resp.setConfidentialites(confidentialiteRepository.findAll());
-        return resp;
     }
-
-
 
     public StatsDTO getStats() {
         StatsDTO dto = new StatsDTO();
@@ -357,7 +182,7 @@ public class AdminBcService {
 
         // 3. Courriers urgents
         int urgentCount = (int) courrierRepository.findAll().stream()
-                .filter(c -> c.getUrgence() == urgenceRepository.findByNom("URGENT"))
+                .filter(c -> c.getUrgence().getNom() == "URGENT")
                 .count();
         dto.setTotalUrgentCourriers(urgentCount);
 
@@ -403,7 +228,6 @@ public class AdminBcService {
 
         dto.setConfidentialiteCounts(confCounts);
 
-
         // 6. Courriers par service (by service name)
         Map<String, Map<String, Integer>> courriersByService =
                 courriers.stream()
@@ -416,15 +240,16 @@ public class AdminBcService {
                                 )
                         ));
 
-        // make sure every service has both keys, even if zero
-        courriersByService.values()
-                .forEach(m -> {
-                    m.putIfAbsent("arrivee", 0);
-                    m.putIfAbsent("depart",  0);
-                });
+                // make sure every service has both keys, even if zero
+                        courriersByService.values()
+                                .forEach(m -> {
+                                    m.putIfAbsent("arrivee", 0);
+                                    m.putIfAbsent("depart",  0);
+                                });
 
-        // set on your DTO
-        dto.setCourriersByService(courriersByService);
+                // set on your DTO
+                        dto.setCourriersByService(courriersByService);
+
 
         // 7. Courriers traités par employé (by employee full name)
         Map<String, Integer> byEmploye = courriers.stream()
@@ -454,29 +279,6 @@ public class AdminBcService {
         return dto;
     }
 
-    public boolean adminBCUpdateCourrier(AdminBCUpdateCourrierDTO dto) {
-        Courrier courrier = courrierRepository.findById(dto.getCourrierId()).orElse(null);
-        if (courrier == null) return false;
-
-        // Update Service
-        if (dto.getServiceId() != null) {
-            serviceInternRepository.findById(dto.getServiceId()).ifPresent(courrier::setService);
-        }
-
-        // Update Urgence
-        if (dto.getUrgence() != null ) {
-            urgenceRepository.findById(dto.getUrgence()).ifPresent(courrier::setUrgence);
-
-        }
-
-        // Update Confidentialite
-        if (dto.getConfidentialite() != null) {
-            confidentialiteRepository.findById(dto.getConfidentialite()).ifPresent(courrier::setDegreConfiden);
-        }
-
-        courrierRepository.save(courrier);
-        return true;
-    }
 
 
 
